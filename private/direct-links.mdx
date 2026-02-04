@@ -3,7 +3,7 @@ title: Browser login (direct links)
 description: Enable direct browser access via t.me links
 ---
 
-Use this setup to let users open the Mini App directly in a browser via `t.me` links (without the in-app Telegram browser).
+Use this setup to let you open the Mini App directly in a browser via `t.me` links (without the in-app Telegram browser).
 
 ## Configure domain in BotFather
 
@@ -17,3 +17,100 @@ The domain must match the `BOT_ADMIN_URL` value (without the `https://` prefix).
 </Note>
 
 After this configuration, users can open the Mini App via direct browser links.
+
+## Supported startapp parameters
+
+Use Telegram deep links to open specific sections inside the Mini App:
+
+```
+https://t.me/<bot_username>?startapp=<value>
+```
+
+| `startapp` value | Opens | Example |
+|---|---|---|
+| *(empty)* | Default app entry (redirects based on role) | `https://t.me/<bot_username>?startapp` |
+| `user_<telegram_id>` | Admin user details | `https://t.me/<bot_username>?startapp=user_123456789` |
+| `support_ticket_<ticket_id>` | Admin support ticket | `https://t.me/<bot_username>?startapp=support_ticket_42` |
+| `buy_<plan_id>_<months>` | User payment flow for a plan period | `https://t.me/<bot_username>?startapp=buy_12_3` |
+| `sub_<subscription_id>` | User dashboard for a specific subscription | `https://t.me/<bot_username>?startapp=sub_98765` |
+
+## Direct browser links (https://bot.example.com)
+
+The Mini App uses hash-based routes. Use the `/#/` prefix in direct links:
+
+```
+https://bot.example.com/#/<path>
+```
+
+### Admin UI routes
+
+| Page | Direct link |
+|---|---|
+| Purchases overview | `https://bot.example.com/#/purchases` |
+| Users overview | `https://bot.example.com/#/users` |
+| Broadcasts | `https://bot.example.com/#/broadcasts` |
+| Promos | `https://bot.example.com/#/promos` |
+| Campaigns | `https://bot.example.com/#/campaigns` |
+| Campaign details | `https://bot.example.com/#/campaigns/<id>` |
+| Analytics | `https://bot.example.com/#/analytics` |
+| Promo details | `https://bot.example.com/#/promos/<promo_id>` |
+| User management | `https://bot.example.com/#/user-management` |
+| User details | `https://bot.example.com/#/user/<telegram_id>` |
+| User payments | `https://bot.example.com/#/user/<telegram_id>/payments` |
+| User promos | `https://bot.example.com/#/user/<telegram_id>/promos` |
+| User referral bonuses | `https://bot.example.com/#/user/<telegram_id>/referral-bonuses` |
+| User plan changes | `https://bot.example.com/#/user/<telegram_id>/plan-changes` |
+| User referrals | `https://bot.example.com/#/user/<telegram_id>/referrals` |
+| User tickets | `https://bot.example.com/#/user/<telegram_id>/tickets` |
+| Settings | `https://bot.example.com/#/settings` |
+| Plans | `https://bot.example.com/#/plans` |
+| Payments (settings) | `https://bot.example.com/#/payments` |
+| Payments list | `https://bot.example.com/#/payments-list` |
+| Branding | `https://bot.example.com/#/branding` |
+| Remnawave webhooks | `https://bot.example.com/#/remnawave-webhooks` |
+| Torrent blocker | `https://bot.example.com/#/torrent-blocker` |
+| Security | `https://bot.example.com/#/security` |
+| Roles | `https://bot.example.com/#/roles` |
+| Role edit | `https://bot.example.com/#/roles/<id>` |
+| Support | `https://bot.example.com/#/support` |
+| Support ticket | `https://bot.example.com/#/support/ticket/<ticket_id>` |
+| New support chat | `https://bot.example.com/#/support/new/<telegram_id>` |
+| FAQ | `https://bot.example.com/#/faq` |
+| Templates | `https://bot.example.com/#/templates` |
+| Autoreply | `https://bot.example.com/#/autoreply` |
+| Partners dashboard | `https://bot.example.com/#/partners` |
+| Partners list | `https://bot.example.com/#/partners/list` |
+| Partner applications | `https://bot.example.com/#/partners/applications` |
+| Application details | `https://bot.example.com/#/partners/applications/<app_id>` |
+| Withdrawals | `https://bot.example.com/#/partners/withdrawals` |
+| Withdrawal details | `https://bot.example.com/#/partners/withdrawals/<withdrawal_id>` |
+| Partner details | `https://bot.example.com/#/partners/<partner_id>` |
+| Partner clients | `https://bot.example.com/#/partners/<partner_id>/clients` |
+| Partner commissions | `https://bot.example.com/#/partners/<partner_id>/commissions` |
+| Partner withdrawals | `https://bot.example.com/#/partners/<partner_id>/withdrawals` |
+
+### User dashboard routes
+
+| Page | Direct link |
+|---|---|
+| My dashboard | `https://bot.example.com/#/my-dashboard` |
+| Purchase history | `https://bot.example.com/#/my-purchases` |
+| Plan selection | `https://bot.example.com/#/my-plans` |
+| Change plan | `https://bot.example.com/#/change-plan` |
+| Payment | `https://bot.example.com/#/payment` |
+| Promo history | `https://bot.example.com/#/my-promos` |
+| Referrals | `https://bot.example.com/#/my-referrals` |
+| Cabinet | `https://bot.example.com/#/cabinet` |
+| Passkeys | `https://bot.example.com/#/my-passkeys` |
+| Server status | `https://bot.example.com/#/server-status` |
+| Buy extra traffic | `https://bot.example.com/#/buy-extra-traffic` |
+| Buy extra devices | `https://bot.example.com/#/buy-extra-devices` |
+| Installation guide | `https://bot.example.com/#/installation-guide` |
+| Installation apps | `https://bot.example.com/#/installation-guide/apps` |
+| Add to home screen | `https://bot.example.com/#/add-to-home-screen` |
+| Support chat | `https://bot.example.com/#/support-chat` |
+| New support ticket | `https://bot.example.com/#/support-chat/new` |
+| Support ticket | `https://bot.example.com/#/support-chat/ticket/<ticket_id>` |
+| Partner dashboard | `https://bot.example.com/#/partner-dashboard` |
+| Partner withdrawal details | `https://bot.example.com/#/partner-dashboard/withdrawals/<withdrawal_id>` |
+| Deeplink redirect | `https://bot.example.com/#/deeplink` |
