@@ -1,0 +1,103 @@
+---
+title: Setup Instructions
+description: Step-by-step guide to install and run Remnawave Telegram Shop Bot
+---
+
+
+## Prerequisites
+
+Before starting, ensure you have:
+- A Linux server or VPS
+- Docker and Docker Compose installed
+- A Telegram Bot token from [@BotFather](https://t.me/BotFather)
+- Remnawave panel with API token and X_API_KEY
+- PostgreSQL support (included in docker-compose)
+
+## Installation
+
+<Steps>
+
+  <Step title="Clone the repository">
+  ```bash
+  git clone https://github.com/Jolymmiels/remnawave-telegram-shop
+  cd remnawave-telegram-shop
+  ```
+  </Step>
+  <Step title="Create environment file">
+  ```bash
+  cp .env.sample .env
+  ```
+  </Step>
+  <Step title="Configure essential variables">
+
+  Edit `.env` with your settings:
+  ```bash
+  TELEGRAM_TOKEN=your_bot_token_here
+  DATABASE_URL=postgresql://user:password@postgres:5432/remnawave
+  REMNAWAVE_URL=https://your-panel.com
+  REMNAWAVE_TOKEN=your_api_token
+  X_API_KEY=tinyauth login:pass in base64
+  ADMIN_TELEGRAM_ID=your_id
+  PRICE_1=5
+  PRICE_3=12
+  PRICE_6=20
+  PRICE_12=35
+  ```
+  </Step>
+  <Step title="Start the bot">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+  <Step title="Verify installation">
+  ```bash
+  docker compose logs -f remnawave-telegram-shop-bot
+  ```
+
+  The bot is ready when you see "Starting bot" message.
+  </Step>
+  <Step title="Test the bot">
+  Send `/start` command to your bot on Telegram
+  </Step>
+</Steps>
+
+## Update Instructions
+
+To update to the latest version:
+
+```bash
+docker compose pull
+docker compose down
+docker compose up -d
+```
+
+## Version Support Matrix
+
+| Remnawave | Bot      |
+|-----------|----------|
+| 1.6       | 2.3.6    |
+| 2.0-2.1.9 | 3.2.4    |
+| 2.2.*     | 3.2.5+   |
+
+## Troubleshooting
+
+### Bot not responding
+- Check if container is running: `docker compose ps`
+- Verify Telegram token is correct
+- Review logs: `docker compose logs remnawave-telegram-shop-bot`
+
+### Database connection error
+- Ensure PostgreSQL container is running
+- Verify DATABASE_URL format
+- Check database credentials
+
+### Remnawave API errors
+- Verify REMNAWAVE_URL is accessible
+- Check REMNAWAVE_TOKEN validity
+- Test API connectivity from the container
+
+## Next Steps
+
+- Configure [payment methods](/payments/yookassa/)
+- Set up [environment variables](/configuration/variables/)
+- Learn about [admin commands](/admin/commands/)

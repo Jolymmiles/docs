@@ -1,0 +1,54 @@
+---
+title: Payment Methods Overview
+description: All available payment systems
+---
+
+The bot supports four flexible payment methods to accommodate different user preferences.
+
+## YooKassa (Bank Cards)
+
+💳 Accept Visa, Mastercard, and other payment cards
+
+**Best for**: CIS region, card payments
+**Limitations**: Geographic restrictions
+
+## CryptoPay (Cryptocurrency)
+
+🪙 Bitcoin, Ethereum, and other cryptocurrencies
+
+**Best for**: Global audience, tech-savvy users
+**Advantages**: No chargebacks, instant settlement available
+
+## Telegram Stars
+
+⭐ Native Telegram payment system
+
+**Best for**: Seamless Telegram integration
+**Advantages**: Users familiar with platform, global availability
+**Limitations**: Limited conversion, whole number prices only
+
+## Tribute (Subscriptions)
+
+🎟️ Recurring subscription management
+
+**Best for**: Automatic renewals, enterprise setup
+**Requirements**: Public domain with SSL certificate
+
+## Payment Configuration
+
+Each payment method configured independently:
+
+```bash
+# Enable/disable methods
+YOOKASA_ENABLED=true
+CRYPTO_PAY_ENABLED=true
+TELEGRAM_STARS_ENABLED=true
+
+# Set prices for each method
+PRICE_1=5
+PRICE_3=12
+STARS_PRICE_1=50
+```
+
+
+See detailed setup guides for each payment method in the **Payment Systems** section.

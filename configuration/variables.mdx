@@ -1,0 +1,164 @@
+---
+title: Environment Variables
+description: Complete reference for all configuration variables
+---
+
+## Essential Configuration
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `TELEGRAM_TOKEN` | Telegram Bot API token | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@postgres:5432/remnawave` |
+| `REMNAWAVE_URL` | Remnawave panel API URL | `https://panel.example.com` |
+| `REMNAWAVE_TOKEN` | Remnawave API token | `your_token` |
+| `ADMIN_TELEGRAM_ID` | Admin's Telegram ID | `123456789` |
+
+## Pricing Configuration
+
+```bash
+PRICE_1=5
+PRICE_3=12
+PRICE_6=20
+PRICE_12=35
+DAYS_IN_MONTH=30
+```
+
+For Telegram Stars:
+```bash
+STARS_PRICE_1=50
+STARS_PRICE_3=120
+STARS_PRICE_6=200
+STARS_PRICE_12=350
+```
+
+## Subscription & Trial Settings
+
+```bash
+REMNAWAVE_TAG=paying_user
+TRIAL_REMNAWAVE_TAG=trial_user
+TRIAL_DAYS=7
+TRIAL_TRAFFIC_LIMIT=10
+TRAFFIC_LIMIT=100
+TRAFFIC_LIMIT_RESET_STRATEGY=MONTH
+TRIAL_TRAFFIC_LIMIT_RESET_STRATEGY=MONTH
+REFERRAL_DAYS=0
+```
+
+**Traffic Limit Reset Strategy:**
+- `DAY` - Traffic limit resets every day
+- `WEEK` - Traffic limit resets every week
+- `MONTH` - Traffic limit resets every month (default)
+- `NO_RESET` - Traffic limit never resets
+
+## Payment Systems
+
+### YooKassa
+```bash
+YOOKASA_ENABLED=true
+YOOKASA_SHOP_ID=your_id
+YOOKASA_SECRET_KEY=your_key
+YOOKASA_EMAIL=your_email@example.com
+YOOKASA_URL=https://payment.yandex.net
+```
+
+### CryptoPay
+```bash
+CRYPTO_PAY_ENABLED=true
+CRYPTO_PAY_TOKEN=your_token
+CRYPTO_PAY_URL=https://pay.crypt.bot
+```
+
+### Telegram Stars
+```bash
+TELEGRAM_STARS_ENABLED=true
+REQUIRE_PAID_PURCHASE_FOR_STARS=false
+```
+
+### Tribute
+```bash
+TRIBUTE_WEBHOOK_URL=/tribute/webhook
+TRIBUTE_API_KEY=your_key
+TRIBUTE_PAYMENT_URL=https://t.me/tribute/app?startapp=...
+HEALTH_CHECK_PORT=8080
+```
+
+## UI & Links
+
+```bash
+DEFAULT_LANGUAGE=ru
+IS_WEB_APP_LINK=false
+MINI_APP_URL=https://example.com/app
+SERVER_STATUS_URL=https://status.example.com
+SUPPORT_URL=https://t.me/support
+FEEDBACK_URL=https://example.com/feedback
+CHANNEL_URL=https://t.me/channel
+TOS_URL=https://example.com/tos
+```
+
+## User Management
+
+```bash
+BLOCKED_TELEGRAM_IDS=123456789,987654321
+WHITELISTED_TELEGRAM_IDS=111111111,222222222
+```
+
+## Database Configuration
+
+```bash
+POSTGRES_USER=remnawave
+POSTGRES_PASSWORD=secure_password
+POSTGRES_DB=remnawave
+```
+
+## Server Configuration
+
+```bash
+HEALTH_CHECK_PORT=8080
+REMNAWAVE_MODE=remote
+```
+
+## Remnawave API Headers
+
+Configure custom headers for all requests to the Remnawave API:
+
+```bash
+REMNAWAVE_HEADERS=X-Api-Key:your_api_key;X-Custom-Header:value
+```
+
+**Format:** `key1:value1;key2:value2;key3:value3`
+
+**Examples:**
+
+```bash
+# With API Key
+REMNAWAVE_HEADERS=X-Api-Key:your_secret_key
+
+# Multiple headers
+REMNAWAVE_HEADERS=X-Api-Key:secret123;X-Custom-Header:custom_value
+
+# With authorization
+REMNAWAVE_HEADERS=Authorization:Bearer token123;X-Request-ID:12345
+
+# Cookie for Remnawave Reverse-Proxy (egames)
+# Get cookie: https://wiki.egam.es/ru/troubleshooting/common-issues/#утерянный-cookie-пути-к-панели
+REMNAWAVE_HEADERS=Cookie:rEmnaprx=aBCDefgh
+```
+
+**Features:**
+- Supports unlimited custom headers
+- Headers are applied to all Remnawave API requests
+- Whitespace around keys and values is automatically trimmed
+- Invalid headers are silently skipped
+- Loaded headers count is logged at startup
+
+**Migration from X_API_KEY:**
+
+If you were previously using the `X_API_KEY` variable, migrate to `REMNAWAVE_HEADERS`:
+
+```bash
+# Old configuration
+X_API_KEY=your_key
+
+# New configuration
+REMNAWAVE_HEADERS=X-Api-Key:your_key
+```

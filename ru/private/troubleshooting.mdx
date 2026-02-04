@@ -1,0 +1,130 @@
+---
+title: Устранение неполадок
+description: Решения распространённых проблем приватной версии Remnawave Telegram Shop Bot
+---
+
+## Админ-панель не загружается
+
+- Проверьте правильность `BOT_ADMIN_URL` в `.env`
+- Проверьте конфигурацию реверс-прокси
+- Убедитесь, что SSL-сертификат валиден
+- Проверьте логи бота: `docker compose logs -f bot`
+
+---
+
+## Ошибка подключения к базе данных
+
+- Проверьте статус PostgreSQL контейнера: `docker compose ps`
+- Убедитесь в сетевой связности между контейнерами
+- Проверьте переменные `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` в `.env`
+
+```bash
+# Проверка здоровья базы данных
+docker compose exec db pg_isready -U postgres
+```
+
+---
+
+## Ошибка прав доступа для uploads
+
+```bash
+sudo chmod -R 777 /opt/private-remnawave-telegram-shop-bot/uploads
+```
+
+---
+
+## Ошибка прав доступа для logs
+
+```
+error="open access log file: open /logs/access.log: permission denied"
+```
+
+Решение:
+```bash
+sudo chmod 777 /opt/private-remnawave-telegram-shop-bot/logs
+```
+
+---
+
+## Бот не подключается к Remnawave
+
+### На том же сервере (внутренняя сеть)
+- Проверьте, что `REMNAWAVE_URL=http://remnawave:3000` указывает на имя контейнера
+- Убедитесь, что бот и панель в одной Docker-сети (`remnawave-network`)
+- Проверьте, что сеть существует: `docker network ls | grep remnawave`
+
+### На отдельном сервере
+- Проверьте, что `REMNAWAVE_URL` указывает на внешний HTTPS URL панели
+- Убедитесь, что панель доступна извне
+- Проверьте `REMNAWAVE_TOKEN`
+
+---
+
+## Контейнер постоянно перезапускается
+
+```bash
+# Посмотреть логи
+docker compose logs -f bot
+
+# Проверить статус
+docker compose ps
+```
+
+Частые причины:
+- Неверные переменные окружения
+- База данных недоступна
+- Неверный токен Telegram
+
+---
+
+## Ошибка загрузки образа
+
+```
+Error response from daemon: No such image
+```
+
+Убедитесь, что образ загружен:
+```bash
+docker images | grep rwp_shop
+```
+
+Если образа нет, загрузите его:
+```bash
+docker load -i rwp_shop-<VERSION>.tar
+```
+
+---
+
+## Проверка логов
+
+```bash
+# Логи бота
+docker compose logs -f bot
+
+# Логи базы данных
+docker compose logs -f db
+
+# Последние 100 строк
+docker compose logs --tail 100 bot
+```
+
+---
+
+## Полезные команды диагностики
+
+```bash
+# Статус контейнеров
+docker compose ps
+
+# Использование ресурсов
+docker stats
+
+# Проверка сети
+docker network inspect remnawave-network
+
+# Перезапуск бота
+docker compose restart bot
+
+# Полный перезапуск
+docker compose down && docker compose up -d
+```

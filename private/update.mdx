@@ -1,0 +1,139 @@
+---
+title: Update
+description: Instructions for updating the Private Version of Remnawave Telegram Shop Bot
+---
+
+
+<Warning>
+  **Backup Required**
+Before updating, make sure to **[backup your database](/private/backup/)**.
+</Warning>
+
+## Update to New Version
+
+<Steps>
+
+  <Step title="Download new image">
+
+  Download the new image file from the private channel.
+  </Step>
+  <Step title="Load new image">
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Update version in compose.yaml">
+
+  Change the image version:
+  ```yaml
+  image: rwp_shop:<VERSION>
+  ```
+  </Step>
+  <Step title="Restart the bot">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+---
+
+## Upgrade from Public Version
+
+If you already have the public version installed:
+
+<Steps>
+
+  <Step title="Go to bot directory">
+  ```bash
+  cd /opt/remnawave-telegram-shop
+  ```
+  <Note>
+  Replace with your actual bot installation path if different.
+  </Note>
+  </Step>
+  <Step title="Stop current bot">
+  ```bash
+  docker compose down
+  ```
+  </Step>
+  <Step title="Load new image">
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Create uploads directory">
+  ```bash
+  mkdir -p uploads
+  sudo chmod -R 777 uploads
+  ```
+  </Step>
+  <Step title="Update docker-compose.yaml">
+
+  Change the image and add ports:
+  ```yaml
+  name: rwp_shop
+
+  services:
+    bot:
+      image: rwp_shop:<VERSION>
+      container_name: rwp_shop
+      restart: unless-stopped
+      ports:
+        - "127.0.0.1:12345:8080"
+      depends_on:
+        db:
+          condition: service_healthy
+      volumes:
+        - ./translations:/translations
+        - ./uploads:/uploads
+        - /etc/machine-id:/etc/machine-id:ro
+  ```
+
+  <Note>
+  The `/etc/machine-id` volume is required for license binding. It ensures the license remains valid when the container is recreated.
+  </Note>
+  </Step>
+  <Step title="Add license key and admin URL to .env">
+  ```bash
+  echo "LICENSE_KEY=your-license-key" >> .env
+  echo "BOT_ADMIN_URL=https://bot.example.com" >> .env
+  ```
+
+  <Warning>
+    **License Key**
+  `LICENSE_KEY` is required for the bot to work. You can get it from your personal dashboard at the license server after purchasing a subscription.
+  </Warning>
+  </Step>
+  <Step title="Configure reverse proxy">
+
+  Point `bot.example.com` to `127.0.0.1:12345` (see [Configure Reverse Proxy](/private/installation/#configure-reverse-proxy))
+  </Step>
+  <Step title="Start the bot">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+---
+
+## Verify Update
+
+After updating, verify:
+
+```bash
+# Container status
+docker compose ps
+
+# Bot logs
+docker compose logs -f bot
+
+# Image version
+docker images | grep rwp_shop
+```
+
+<Tip>
+  **Having issues?**
+See the [Troubleshooting](/private/troubleshooting/) page for solutions to common problems.
+</Tip>

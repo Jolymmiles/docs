@@ -1,0 +1,331 @@
+---
+title: Логи и отладка
+description: Понимание и анализ логов для решения проблем
+---
+
+## Просмотр логов
+
+### Логи в реальном времени
+
+```bash
+# Следить за логами бота (live)
+docker compose logs -f remnawave-telegram-shop-bot
+
+# Следить за логами БД
+docker compose logs -f postgres
+
+# Оба одновременно
+docker compose logs -f
+```
+
+### Исторические логи
+
+```bash
+# Последние 100 строк
+docker compose logs --tail 100 remnawave-telegram-shop-bot
+
+# За определенный временной период
+docker compose logs \
+  --since 2024-11-10T10:00:00 \
+  --until 2024-11-10T11:00:00 \
+  remnawave-telegram-shop-bot
+
+# Все доступные логи
+docker compose logs remnawave-telegram-shop-bot > /tmp/bot-logs.txt
+```
+
+## Уровни логирования
+
+### Логи ошибок
+
+```bash
+# Показать только ошибки
+docker compose logs remnawave-telegram-shop-bot | grep -i error
+
+# С контекстом
+docker compose logs remnawave-telegram-shop-bot | grep -A 5 -B 5 "error"
+```
+
+Частые ошибки:
+- `connection refused` - Сервис недоступен
+- `permission denied` - Ошибка доступа
+- `timeout` - Медленный ответ
+- `invalid token` - Ошибка аутентификации
+
+### Логи предупреждений
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i warning
+```
+
+### Информационные логи
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i "info\|started"
+```
+
+## Частые паттерны логов
+
+### При запуске
+
+```
+[INFO] Starting bot
+[INFO] Connecting to database
+[INFO] Database connection established
+[INFO] Loading configuration
+[INFO] Bot ready for commands
+```
+
+### Обработка платежей
+
+```
+[INFO] Payment received from user 123456789
+[INFO] Processing payment via yookassa
+[INFO] Activating subscription for user
+[INFO] Subscription activated successfully
+```
+
+### Ошибки
+
+```
+[ERROR] Failed to connect to database: connection refused
+[ERROR] Invalid API token
+[ERROR] User not found in Remnawave
+[ERROR] Webhook signature verification failed
+```
+
+## Фильтрация логов
+
+### По компоненту
+
+```bash
+# Логи БД
+docker compose logs remnawave-telegram-shop-bot | grep -i "database\|db\|postgres"
+
+# Логи платежей
+docker compose logs remnawave-telegram-shop-bot | grep -i "payment\|yookassa\|crypto\|stars"
+
+# Логи пользователей
+docker compose logs remnawave-telegram-shop-bot | grep -i "user\|subscription"
+
+# Логи API
+docker compose logs remnawave-telegram-shop-bot | grep -i "api\|remnawave"
+```
+
+### По серьезности
+
+```bash
+# Ошибки
+docker compose logs remnawave-telegram-shop-bot | grep ERROR
+
+# Предупреждения
+docker compose logs remnawave-telegram-shop-bot | grep WARNING
+
+# Информация
+docker compose logs remnawave-telegram-shop-bot | grep INFO
+```
+
+### По пользователю
+
+```bash
+# Конкретный пользователь
+docker compose logs remnawave-telegram-shop-bot | grep "123456789"
+
+# Недавняя активность
+docker compose logs remnawave-telegram-shop-bot | grep -i "user" | tail -20
+```
+
+## Отладка конкретных проблем
+
+### Отладка БД
+
+```bash
+# Подключитесь напрямую
+docker compose exec postgres \
+  psql -U remnawave -d remnawave
+
+# Проверьте соединения
+SELECT * FROM pg_stat_activity;
+
+# Список таблиц
+\dt
+
+# Проверьте конкретную таблицу
+SELECT COUNT(*) FROM subscriptions;
+```
+
+### Отладка платежей
+
+```bash
+# Просмотрите логи платежей
+docker compose logs remnawave-telegram-shop-bot | grep -A 10 "payment"
+
+# Проверьте статус транзакции
+docker compose logs remnawave-telegram-shop-bot | grep "transaction\|order"
+
+# Ответы API
+docker compose logs remnawave-telegram-shop-bot | grep "response\|status"
+```
+
+### Отладка действий пользователей
+
+```bash
+# Пользователь запустил бота
+docker compose logs remnawave-telegram-shop-bot | grep "user.*start\|/start"
+
+# Пользователь сделал платеж
+docker compose logs remnawave-telegram-shop-bot | grep "user.*payment"
+
+# Пользователь оформил подписку
+docker compose logs remnawave-telegram-shop-bot | grep "subscription.*created"
+```
+
+## Продвинутая отладка
+
+### Увеличьте уровень логирования
+
+Отредактируйте `docker-compose.yaml`:
+```yaml
+environment:
+  LOG_LEVEL: DEBUG
+```
+
+Перезагрузитесь:
+```bash
+docker compose up -d
+```
+
+### Сохранение логов в файл
+
+```bash
+# Непрерывное логирование
+docker compose logs -f remnawave-telegram-shop-bot > /var/log/bot.log 2>&1 &
+
+# Следите за файлом
+tail -f /var/log/bot.log
+```
+
+### Ротация логов
+
+```bash
+# Создайте конфиг logrotate
+sudo tee /etc/logrotate.d/remnawave-bot > /dev/null <<EOF
+/var/log/bot.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+}
+EOF
+```
+
+### Сохранение логов для анализа
+
+```bash
+# Создайте архив логов
+docker compose logs remnawave-telegram-shop-bot > logs_$(date +%Y%m%d).txt
+gzip logs_*.txt
+
+# Сохраните на внешнее хранилище
+scp logs_*.txt.gz backup@server:/backups/
+```
+
+## Инструменты анализа логов
+
+### Поиск ошибок
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | \
+  grep -E "ERROR|FATAL|failed" | \
+  wc -l  # Подсчитайте ошибки
+```
+
+### Анализ по временной шкале
+
+```bash
+# Группируйте по часам
+docker compose logs remnawave-telegram-shop-bot | \
+  grep ERROR | \
+  awk '{print $1}' | \
+  sort | uniq -c
+```
+
+### Анализ производительности
+
+```bash
+# Найдите медленные операции
+docker compose logs remnawave-telegram-shop-bot | \
+  grep "duration\|time" | \
+  sort -k3 -nr | head -10
+```
+
+## Связанные логи
+
+### Логи системы Docker
+
+```bash
+# Логи демона Docker
+docker logs $(docker compose ps -q remnawave-telegram-shop-bot) -f
+
+# События контейнера
+docker events --filter type=container
+```
+
+### Системные логи
+
+```bash
+# Логи Linux системы
+journalctl -u docker -f
+
+# Проверьте свободное место
+df -h
+```
+
+## Безопасность логов
+
+⚠️ **Важно**: Логи могут содержать:
+- ID пользователей
+- Детали транзакций
+- API ключи (если неправильно настроено)
+- Чувствительную системную информацию
+
+**Лучшие практики**:
+- ✅ Ограничьте доступ к логам
+- ✅ Регулярно ротируйте логи
+- ✅ Архивируйте старые логи
+- ✅ Никогда не делитесь логами публично с ключами
+- ❌ Не логируйте пароли/токены
+
+## Отладка с помощью логов
+
+### Проблема: Бот не отвечает
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -E "ERROR|failed|starting"
+```
+
+### Проблема: Платежи не работают
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i "payment\|yookassa"
+```
+
+### Проблема: Медленная работа
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep "duration\|slow\|timeout"
+```
+
+### Проблема: Ошибки БД
+```bash
+docker compose logs postgres | grep -E "ERROR|failed"
+```
+
+## Когда собирать логи
+
+Перед открытием issue/обращением в поддержку:
+1. Воспроизведите проблему
+2. Соберите логи: `docker compose logs > issue.log`
+3. Включите последние 50-100 строк
+4. Удалите чувствительные данные
+5. Опишите предпринятые шаги
+6. Включите конфигурацию (без секретов)

@@ -1,0 +1,122 @@
+---
+title: Мониторинг и проверки здоровья
+description: Мониторинг статуса бота и проверки здоровья
+---
+
+## Конечная точка проверки здоровья
+
+Бот предоставляет конечную точку мониторинга на настроенном порту.
+
+```bash
+curl http://your-bot:8080/healthcheck
+```
+
+### Ответ
+
+**Здоров (200 OK):**
+```json
+{
+  "status": "ok",
+  "version": "3.4.2",
+  "commit": "abc123",
+  "buildDate": "2024-11-10"
+}
+```
+
+**Ошибка (500 Error):**
+```json
+{
+  "status": "error",
+  "message": "database connection failed"
+}
+```
+
+## Что проверяется
+
+1. **База данных** - Подключение к PostgreSQL
+2. **Панель Remnawave** - Доступность API
+3. **Служба бота** - Процесс запущен
+4. **API ключ** - Учётные данные действительны
+
+## Настройка мониторинга
+
+### Проверка здоровья Docker Compose
+
+Уже настроена в `docker-compose.yaml`:
+
+```yaml
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+```
+
+### Ручной мониторинг
+
+Регулярно проверяйте статус:
+
+```bash
+# Проверить сейчас
+curl -s http://localhost:8080/healthcheck | jq
+
+# Проверить каждую минуту
+watch -n 60 'curl -s http://localhost:8080/healthcheck | jq'
+
+# Записать результаты
+while true; do
+  echo "$(date): $(curl -s http://localhost:8080/healthcheck)"
+  sleep 60
+done >> /var/log/bot-health.log
+```
+
+### Внешний мониторинг
+
+**Uptime Robot** (рекомендуется):
+1. Перейдите на [uptimerobot.com](https://uptimerobot.com)
+2. Добавьте HTTP монитор
+3. URL: `https://bot.example.com/healthcheck`
+4. Интервал: 5 минут
+5. Получайте оповещения об отказах
+
+**Grafana + Prometheus**:
+- Скрейпируйте конечную точку каждые 30 сек
+- Создавайте дашборды
+- Устанавливайте оповещения
+
+## Логи и отладка
+
+### Просмотр логов
+
+```bash
+# Текущие логи
+docker compose logs remnawave-telegram-shop-bot
+
+# Следить за логами (в реальном времени)
+docker compose logs -f remnawave-telegram-shop-bot
+
+# Последние N строк
+docker compose logs --tail 100 remnawave-telegram-shop-bot
+
+# Определённый диапазон времени
+docker compose logs --since 2024-11-10T10:00:00 --until 2024-11-10T11:00:00 remnawave-telegram-shop-bot
+```
+
+### Логи БД
+
+```bash
+docker compose logs -f postgres
+```
+
+### Фильтрация логов
+
+```bash
+# Только ошибки
+docker compose logs remnawave-telegram-shop-bot | grep ERROR
+
+# Связанные с платежами
+docker compose logs remnawave-telegram-shop-bot | grep -i payment
+
+# Конкретный пользователь
+docker compose logs remnawave-telegram-shop-bot | grep "user_id:123456789"
+```

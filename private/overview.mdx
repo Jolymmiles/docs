@@ -1,0 +1,274 @@
+---
+title: Private Version
+description: Overview of the private version features - Admin UI Panel
+---
+
+
+The private version includes a full-featured **Admin UI Panel** and **User Dashboard** built as a Telegram Mini App. Below is an overview of all available features.
+
+## User Dashboard (Mini App)
+
+Personal account for users with the following features:
+
+- **Subscription info** - view current plan, expiration date, traffic usage
+- **Available plans** - browse and purchase subscription plans
+- **Payment history** - view all purchases
+- **Promo codes** - apply promo codes for discounts
+- **Trial activation** - activate trial subscription
+- **Device management** - view and delete devices (HWID)
+- **Autopay settings** - enable/disable automatic renewal
+- **Payment methods** - manage saved payment methods
+- **Plan change** - upgrade/downgrade subscription
+- **Referral system** - referral link and bonuses
+
+### Screenshots
+
+#### Main Dashboard
+Subscription status, traffic usage, devices count, payment options, autopay toggle, and saved cards.
+
+![Main Dashboard](/images/lk/SCR-20251221-sgok.png)
+
+#### Device Management
+List of connected devices with OS info, connection date, and delete option.
+
+![Devices](/images/lk/SCR-20251221-sgqz.png)
+
+#### Referral System
+Referral statistics (invited, active, bonus days) and referral link copy button.
+
+![Referrals](/images/lk/SCR-20251221-sgso.png)
+
+#### Promo Codes
+Apply promo codes and view history of applied codes with bonuses.
+
+![Promo Codes](/images/lk/SCR-20251221-sguq.png)
+
+#### Subscription Renewal
+Choose subscription period (1/3/6/12 months) and plan details.
+
+![Renewal](/images/lk/SCR-20251221-sgwn.png)
+
+#### Plan Change
+Upgrade/downgrade options with three modes: surcharge, conversion, and downgrade.
+
+![Plan Change](/images/lk/SCR-20251221-sgxz.png)
+
+---
+
+## Dashboard & Statistics
+
+- **Total statistics** - users, revenue, subscriptions
+- **Monthly growth** metrics
+- **Daily user growth** charts
+- **Daily revenue** analytics
+- **Overview** dashboard
+
+## User Management
+
+### View Operations
+- Search users
+- View user details and profile
+- View payment history
+- View user devices (HWID)
+- View traffic info
+- View Remnawave user info
+- View referral bonuses and referrals
+- View plan change history
+- View user's promo codes
+
+### Edit Operations
+- Update user data
+- Delete user
+- Block/Unblock user
+- Whitelist/Unwhitelist user
+- Delete user device
+- Revoke subscription
+- Reset traffic
+- Grant subscription
+
+## Broadcast System
+
+- View all broadcasts
+- Create new broadcast
+- Delete broadcast
+
+### Screenshots
+
+#### Broadcast Editor
+HTML-formatted message editor with recipient filters (active/expired/no subscription/all), language filter, inline buttons, preview, and broadcast history with progress.
+
+![Broadcast Editor](/images/admin/broadcast/SCR-20251221-slcf.png)
+
+## Promo Codes
+
+- View all promo codes
+- View promo usage statistics
+- Create promo code
+- Update promo code
+- Delete promo code
+
+### Screenshots
+
+#### Promo Code Manager
+Create promo codes (bonus days or discount %), filter by status (all/active/inactive), view usage stats, copy/share/toggle/delete codes.
+
+![Promo Codes](/images/admin/promo/SCR-20251221-smcl.png)
+
+## Support System
+
+### Admin Features
+- View all support tickets
+- View ticket messages
+- Support statistics
+- Create ticket (on behalf of user)
+- Reply to tickets
+- Close/Reopen tickets
+
+#### Admin Screenshots
+
+##### Ticket List
+Filter tickets by status (open/closed/all), view message count per ticket.
+
+![Support Tickets](/images/admin/support/SCR-20251221-snhh.png)
+
+### User Features (Mini App)
+- View own tickets
+- Create new ticket
+- Send messages
+- Upload attachments (chunked upload)
+
+#### User Screenshots
+
+##### New Ticket
+FAQ section with expandable answers, ticket creation form with subject and message.
+
+![New Ticket](/images/client/support/SCR-20251221-soqw.png)
+
+##### Ticket Chat
+Real-time chat with ticket status, message history, file attachments support.
+
+![Ticket Chat](/images/client/support/SCR-20251221-spnt.png)
+
+## FAQ Management
+
+- View FAQ items
+- Create FAQ item
+- Update FAQ item
+- Delete FAQ item
+- Reorder FAQ items
+
+### Screenshots
+
+#### FAQ Editor
+Manage FAQ items shown before support ticket creation. Drag to reorder, toggle visibility, edit content with HTML support.
+
+![FAQ Manager](/images/admin/faq/SCR-20251221-sogj.png)
+
+## Partner Program
+
+### Admin Features
+- View all partners and stats
+- View partner details and clients
+- View partner commissions
+- View partner applications
+- View withdrawal requests
+- Create partner manually
+- Activate/Deactivate partners
+- Update commission rates
+- Approve/Reject applications
+- Process withdrawals (with proof upload)
+
+#### Admin Screenshots
+
+##### Partners Dashboard
+Overview with statistics (partners, clients, commissions, withdrawn), applications, withdrawals, and partner list.
+
+![Partners Dashboard](/images/admin/partner/SCR-20251221-sjyy.png)
+
+##### Application Details
+Review application with user info, set commission rate, approve or reject with reason.
+
+![Application Details](/images/admin/partner/SCR-20251221-shvo.png)
+
+### User Features (Mini App)
+- View partner status
+- Apply for partnership
+- Partner dashboard
+- View clients and commissions
+- View withdrawals
+- Request withdrawal
+
+### Screenshots
+
+#### Apply for Partnership
+Page for submitting a partnership application.
+
+![Apply for Partnership](/images/lk/SCR-20251221-shlm.png)
+
+#### Partner Dashboard
+Partner statistics: commission rate, clients, earnings, available balance, withdrawal button, and tabs for clients/commissions/withdrawals.
+
+![Partner Dashboard](/images/lk/SCR-20251221-shyg.png)
+
+## Plans Management
+
+- View all plans
+- View plan purchase count
+- View plan descriptions (localized)
+- Create plan
+- Update plan
+- Delete plan
+- Set default plan
+- Reorder plans
+- Manage plan descriptions per language
+
+## Settings
+
+- View all settings
+- Update settings
+- View squads configuration
+- Branding settings
+
+## Roles & Permissions
+
+Full RBAC (Role-Based Access Control) system:
+
+- Create/Update/Delete roles
+- Assign permissions to roles
+- View user permissions
+
+### Available Permissions
+| Permission | Description |
+|------------|-------------|
+| `view_dashboard` | View dashboard statistics |
+| `view_clients` | View user information |
+| `edit_clients` | Modify user data |
+| `view_broadcasts` | View broadcasts |
+| `create_broadcast` | Create/delete broadcasts |
+| `view_promos` | View promo codes |
+| `manage_promos` | Create/edit/delete promos |
+| `view_support` | View support tickets |
+| `reply_support` | Reply and manage tickets |
+| `view_partners` | View partner information |
+| `manage_partners` | Manage partners |
+| `view_settings` | View settings |
+| `manage_settings` | Modify settings |
+| `view_plans` | View plans |
+| `manage_plans` | Create/edit/delete plans |
+
+## Payments
+
+- Embedded payment creation (YooKassa widget)
+- Get available payment methods
+- Get payment configuration
+- Get payment systems
+- Check purchase status
+- Tribute webhook support
+
+### Additional Payment Systems (Private Version)
+
+| System | Description |
+|--------|-------------|
+| **WATA** | https://wata.pro |
+| **Platega** | https://platega.io |
+| **SeverPay** | https://severpay.io |

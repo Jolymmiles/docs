@@ -1,0 +1,104 @@
+---
+title: Tribute Setup
+description: Configure Tribute for subscription management
+---
+
+
+Tribute provides recurring subscription management through Telegram with automatic renewals.
+
+## Critical Requirements
+
+⚠️ **You must have a public domain** with valid SSL certificate (e.g., `bot.example.com`). Webhooks will NOT work on localhost or private IPs.
+
+## Setup Instructions
+
+<Steps>
+
+  <Step title="Create Tribute Channel">
+  - Open Tribute app on Telegram
+  - Create a channel
+  - In "Channels and Groups" → Add your channel
+  - Create new subscription
+  </Step>
+  <Step title="Get Subscription Link">
+  - In Tribute: Subscription → Links
+  - Copy "Telegram Link"
+  - Should look like: `https://t.me/tribute/app?startapp=...`
+  </Step>
+  <Step title="Configure Environment">
+  ```bash
+  TRIBUTE_WEBHOOK_URL=/tribute/webhook
+  TRIBUTE_API_KEY=your_api_key_from_tribute
+  TRIBUTE_PAYMENT_URL=https://t.me/tribute/app?startapp=...
+  HEALTH_CHECK_PORT=8080
+  ```
+  </Step>
+  <Step title="Setup Reverse Proxy">
+
+  Configure Nginx or Traefik to forward HTTPS requests to bot:8080
+
+  ```nginx
+  server {
+    server_name bot.example.com;
+    listen 443 ssl;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+      proxy_pass http://localhost:8080;
+    }
+  }
+  ```
+  </Step>
+  <Step title="Restart Bot">
+  ```bash
+  docker compose down && docker compose up -d
+  ```
+  </Step>
+  <Step title="Test Webhook">
+  ```bash
+  curl https://bot.example.com/tribute/webhook
+  ```
+  </Step>
+</Steps>
+
+## How It Works
+
+1. User clicks payment button
+2. Redirected to Tribute subscription page
+3. User completes Telegram subscription
+4. Tribute sends webhook to your bot
+5. Bot activates subscription for user
+
+## Configuration Variables
+
+| Variable | Description |
+|----------|-------------|
+| `TRIBUTE_WEBHOOK_URL` | Webhook path (e.g., `/tribute/webhook`) |
+| `TRIBUTE_API_KEY` | API key from Tribute settings |
+| `TRIBUTE_PAYMENT_URL` | Subscription link from Tribute |
+| `HEALTH_CHECK_PORT` | Port for webhook (usually 8080) |
+
+## Getting API Key
+
+## Getting API Key
+
+1. Open Tribute app
+2. Settings → API Settings
+3. Create new API key
+4. Copy and paste in `.env`
+
+## SSL Certificate Options
+
+### Let's Encrypt (Free)
+```bash
+# Using Certbot with Nginx
+sudo certbot certonly --standalone -d bot.example.com
+```
+
+
+## Support
+
+- **Tribute Help**: In-app support
+- **Telegram Communities**: Crypto payment groups

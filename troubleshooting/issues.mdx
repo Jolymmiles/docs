@@ -1,0 +1,307 @@
+---
+title: Common Issues
+description: Solutions to frequently encountered problems
+---
+
+## Bot Issues
+
+### Bot Not Responding
+
+**Symptoms**: No reply to `/start` command
+
+**Causes & Solutions**:
+
+1. **Container not running**
+   ```bash
+   docker compose ps
+   # Status should be "Up"
+   ```
+
+2. **Invalid Telegram token**
+   - Verify token from [@BotFather](https://t.me/BotFather)
+   - Check for typos in `.env`
+   - Regenerate if uncertain
+
+3. **Network connectivity**
+   ```bash
+   docker compose exec remnawave-telegram-shop-bot \
+     curl -I https://api.telegram.org
+   ```
+
+4. **Port conflict**
+   ```bash
+   docker compose logs remnawave-telegram-shop-bot | grep "port\|error"
+   ```
+
+### Bot Crashing
+
+**Symptoms**: Container exits unexpectedly
+
+**Check logs**:
+```bash
+docker compose logs --tail 50 remnawave-telegram-shop-bot
+```
+
+**Common causes**:
+- Database connection failed
+- Invalid configuration
+- Out of memory
+- Unhandled exception
+
+**Fix**:
+```bash
+# Restart
+docker compose restart remnawave-telegram-shop-bot
+
+# Update if outdated
+docker compose pull
+docker compose up -d
+```
+
+## Payment Issues
+
+### YooKassa Payments Failing
+
+**Check**:
+```bash
+# Valid credentials
+echo $YOOKASA_SHOP_ID
+echo $YOOKASA_SECRET_KEY
+
+# Connectivity
+docker compose exec remnawave-telegram-shop-bot \
+  curl -I https://payment.yandex.net
+```
+
+**Solutions**:
+- Verify Shop ID and Secret Key are correct
+- Review payment logs
+
+### CryptoPay Not Working
+
+**Check**:
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i crypto
+```
+
+**Solutions**:
+- Regenerate API token if expired
+- Verify token format (no spaces)
+- Check CryptoPay server status
+- Test with valid cryptocurrency address
+
+### Telegram Stars Not Appearing
+
+**Check**:
+```bash
+# Verify enabled
+grep TELEGRAM_STARS_ENABLED .env
+```
+
+**Solutions**:
+- Enable in [@BotFather](https://t.me/BotFather) settings
+- Verify prices are whole numbers
+- Restart bot: `docker compose restart`
+- Check user location supports Stars
+
+## Database Issues
+
+### Database Connection Failed
+
+**Symptoms**: "database connection failed" in logs
+
+```bash
+# Check if PostgreSQL is running
+docker compose ps postgres
+
+# Check if accessible
+docker compose exec postgres \
+  psql -U remnawave -d remnawave -c "SELECT 1"
+```
+
+**Fix**:
+```bash
+# Restart database
+docker compose restart postgres
+
+# Check credentials in .env
+grep DATABASE_URL .env
+
+# Full restart if needed
+docker compose down
+docker compose up -d
+```
+
+### Database is Full
+
+**Symptoms**: Insert/update failures
+
+```bash
+# Check size
+docker compose exec postgres \
+  du -sh /var/lib/postgresql/data
+```
+
+**Solutions**:
+- Archive old data
+- Delete unused records
+- Increase disk space
+- Run VACUUM: `docker compose exec postgres psql -U remnawave -d remnawave -c "VACUUM;"`
+
+### Slow Database Queries
+
+**Symptoms**: Timeouts, high latency
+
+```bash
+# Check connections
+docker compose exec postgres \
+  psql -U remnawave -d remnawave -c "SELECT count(*) FROM pg_stat_activity;"
+
+# Run analyze
+docker compose exec postgres \
+  psql -U remnawave -d remnawave -c "ANALYZE;"
+```
+
+**Solutions**:
+- Create missing indexes
+- Update table statistics
+- Archive historical data
+- Upgrade hardware
+
+## Configuration Issues
+
+### Invalid Environment Variable
+
+**Symptom**: Boot failure
+
+**Check**:
+```bash
+# Validate .env syntax
+docker compose config
+
+# Check for typos
+grep -E "INVALID|TYPO" .env
+```
+
+**Common mistakes**:
+- Missing `=` sign
+- Unquoted values with spaces
+- Invalid UUID format
+- Trailing whitespace
+
+### Changes Not Taking Effect
+
+**Cause**: Bot not restarted
+
+**Solution**:
+```bash
+docker compose down
+docker compose up -d
+```
+
+## API Issues
+
+### Remnawave Panel Connection Failed
+
+**Check**:
+```bash
+# Test connectivity
+docker compose exec remnawave-telegram-shop-bot \
+  curl -I https://your-panel.com
+
+# Verify credentials
+grep REMNAWAVE .env
+```
+
+**Solutions**:
+- Check panel is running
+- Verify REMNAWAVE_URL is correct
+- Check API token validity
+- Review panel logs
+- Verify X_API_KEY is correct
+
+### API Rate Limiting
+
+**Symptoms**: 429 Too Many Requests
+
+**Solutions**:
+- Reduce sync frequency
+- Increase interval between requests
+- Contact panel administrator
+- Check for malicious access
+
+## User Issues
+
+### Users Can't Buy Subscriptions
+
+**Check**:
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i purchase
+```
+
+**Common causes**:
+- Payment method not enabled
+- Invalid payment credentials
+- User blocked
+- Insufficient funds
+
+**Solution**:
+- Verify payment methods enabled
+- Check payment provider credentials
+- Review user logs
+- Test payment flow manually
+
+### Expiration Notifications Not Sending
+
+**Check**:
+```bash
+# Notification time
+grep "16:00\|notification" /var/log/bot.log
+
+# Check Telegram token
+docker compose logs remnawave-telegram-shop-bot | grep -i notification
+```
+
+**Solutions**:
+- Verify system time is correct (UTC)
+- Check Telegram token is valid
+- Review notification logs
+- Verify user language settings
+- Check for rate limiting
+
+## Troubleshooting Commands
+
+```bash
+# Full diagnostic
+docker compose ps
+docker compose logs --tail 100 remnawave-telegram-shop-bot
+docker compose logs -f postgres
+
+# Test connectivity
+docker compose exec remnawave-telegram-shop-bot curl -I https://api.telegram.org
+docker compose exec remnawave-telegram-shop-bot curl -I https://your-panel.com
+
+# Check resources
+docker stats remnawave-telegram-shop-bot
+
+# Validate config
+docker compose config
+```
+
+## When to Restart
+
+| Scenario | Action |
+|----------|--------|
+| Changed `.env` | `docker compose down && docker compose up -d` |
+| Added users to block/whitelist | Automatic (for whitelist) or restart |
+| Updated Docker image | `docker compose pull && docker compose up -d` |
+| Database issues | `docker compose restart postgres` |
+| Full reset | `docker compose down && docker compose up -d` |
+
+## Getting Help
+
+If issues persist:
+1. Collect logs: `docker compose logs > logs.txt`
+2. Check GitHub issues
+3. Review documentation
+4. Create issue with logs and configuration (without secrets)

@@ -1,0 +1,182 @@
+---
+title: User Management
+description: Manage users with blocklists and whitelists
+---
+
+## Blocking Users
+
+Block specific users from accessing the bot.
+
+```bash
+BLOCKED_TELEGRAM_IDS=123456789,987654321,555555555
+```
+
+### How to Block a User
+
+1. Get their Telegram ID
+2. Add to `BLOCKED_TELEGRAM_IDS`
+3. Restart bot: `docker compose down && docker compose up -d`
+
+### When to Block
+
+- Spammers or abusers
+- Users attempting fraud
+- Accounts that violate ToS
+- Suspicious activity
+
+### Find User Telegram ID
+
+Users can find their ID:
+- Send message to [@userinfobot](https://t.me/userinfobot)
+- Copy the ID returned
+- Share with admin (if needed)
+
+## Whitelisting Users
+
+Allow specific users to bypass security checks.
+
+```bash
+WHITELISTED_TELEGRAM_IDS=111111111,222222222,333333333
+```
+
+### How to Whitelist
+
+1. Get Telegram ID (see above)
+2. Add to `WHITELISTED_TELEGRAM_IDS`
+3. Changes take effect immediately
+
+### When to Whitelist
+
+- Service accounts
+- Staff members
+- Verified partners
+- Legitimate bots
+- VIP customers
+
+### Whitelist Priority
+
+```
+Blocked IDs > Whitelist > Security Checks
+```
+
+If a user is in both blocked and whitelist, they are **blocked**.
+
+## User Filtering
+
+### Built-in Detection
+
+The bot automatically detects suspicious accounts:
+
+| Check | Description |
+|-------|-------------|
+| Keyword Analysis | Phishing/fraud patterns |
+| Account Names | Service vs suspicious |
+| Combinations | Dangerous keyword pairs |
+| Service Recognition | Allow `@CompanySupportAdmin` |
+
+### False Positives
+
+If legitimate users are blocked:
+
+1. Get their Telegram ID
+2. Add to `WHITELISTED_TELEGRAM_IDS`
+3. Restart bot if needed
+4. Report issue on GitHub
+
+## User States
+
+```
+New User
+  ↓
+Security Check
+  ├─ Blocked → Denied
+  ├─ Whitelisted → Allowed
+  └─ Check filters
+      ├─ Suspicious → Denied
+      └─ OK → Allowed
+```
+
+## Configuration Examples
+
+### Strict Security
+
+```bash
+# Block known spammers
+BLOCKED_TELEGRAM_IDS=123456789,987654321
+
+# Only allow staff
+WHITELISTED_TELEGRAM_IDS=111111111,222222222,333333333
+```
+
+### Open Access
+
+```bash
+# No blocked users
+BLOCKED_TELEGRAM_IDS=
+
+# Whitelist for staff
+WHITELISTED_TELEGRAM_IDS=111111111
+```
+
+### Selective Trust
+
+```bash
+# Block specific troublemakers
+BLOCKED_TELEGRAM_IDS=999999999
+
+# Trust partners
+WHITELISTED_TELEGRAM_IDS=111111111,222222222
+```
+
+## Monitoring
+
+Check logs for user access attempts:
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep "user\|access\|security"
+```
+
+Look for:
+- Access denied messages
+- Failed authentications
+- Suspicious patterns
+- Repeated attempts
+
+## Best Practices
+
+1. **Review Regularly** - Update lists quarterly
+2. **Document Changes** - Keep notes of why users blocked
+3. **Archive History** - Track decisions for appeals
+4. **Monitor Activity** - Watch for abuse patterns
+5. **Trust Partnership** - Communicate with trusted users
+
+## Troubleshooting
+
+### Blocked User Can Still Access
+
+- Clear browser cache
+- Check configuration format (commas, no spaces)
+- Verify restart completed
+- Check logs for errors
+
+### Whitelist Not Working
+
+- Changes need restart? For blocked IDs yes
+- Whitelist changes are immediate
+- Verify ID format (numeric only)
+- Check for typos
+
+### Too Many False Positives
+
+- Adjust security settings
+- Whitelist legitimate accounts
+- Update bot to latest version
+- Report to GitHub
+
+## Appeals
+
+Users blocked by mistake can:
+1. Contact administrator
+2. Provide explanation
+3. Get whitelisted or unblocked
+4. Admin documents reason

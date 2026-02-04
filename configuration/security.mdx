@@ -1,0 +1,106 @@
+---
+title: Security Settings
+description: Configure user filtering and security features
+---
+
+## User Filtering
+
+The bot includes built-in security features to prevent abuse:
+
+### Blocked Users
+
+Block specific Telegram IDs from accessing the bot:
+
+```bash
+BLOCKED_TELEGRAM_IDS=123456789,987654321,555555555
+```
+
+- Add comma-separated Telegram user IDs
+- Changes take effect after restart
+- Useful for blocking spammers or abusers
+
+### Whitelisted Users
+
+Allow specific users to bypass security checks:
+
+```bash
+WHITELISTED_TELEGRAM_IDS=111111111,222222222,333333333
+```
+
+- Whitelisted users skip suspicious account detection
+- Changes take effect immediately
+- Useful for service accounts or staff
+
+## Suspicious User Detection
+
+The bot automatically detects potentially malicious accounts:
+
+### Detection Methods
+
+1. **Keyword Analysis**: Checks for phishing/fraud patterns
+2. **Account Name Validation**: Identifies suspicious account names
+3. **Combination Checks**: Analyzes dangerous keyword combinations
+4. **Service Account Recognition**: Allows legitimate accounts like `@CompanySupportAdmin`
+
+### How It Works
+
+```
+Detection Flow:
+Incoming User → Account Name Check → Keyword Analysis → 
+→ Service Account Test → Decision (Allow/Block)
+```
+
+
+## Example Configuration
+
+```bash
+# Block known spammers
+BLOCKED_TELEGRAM_IDS=123456789,987654321
+
+# Whitelist service staff
+WHITELISTED_TELEGRAM_IDS=111111111,222222222,333333333
+```
+
+## API Security
+
+### Remnawave API Headers
+
+Secure your Remnawave API connection with custom headers:
+
+```bash
+REMNAWAVE_HEADERS=X-Api-Key:your_api_key;Authorization:Bearer token123
+```
+
+**Security Considerations:**
+
+- **API Key Protection**: Use strong, randomly generated API keys
+- **Header Encryption**: Always transmit over HTTPS
+- **Rotation**: Regularly rotate API keys in your security settings
+- **Audit**: Log all API access for security monitoring
+
+**Common Headers:**
+
+```bash
+# Basic API Key authentication
+REMNAWAVE_HEADERS=X-Api-Key:your_secret_key
+
+# Multiple authentication layers
+REMNAWAVE_HEADERS=X-Api-Key:api_key123;X-Request-Signature:signature_hash
+```
+
+For more details, see [Remnawave Headers Configuration](../variables/#remnawave-api-headers).
+
+## Troubleshooting
+
+### Legitimate users blocked
+
+If valid users are blocked:
+1. Add them to WHITELISTED_TELEGRAM_IDS
+2. Report the false positive on GitHub
+3. Check account names don't match phishing patterns
+
+### Changes not taking effect
+
+- Restart the bot: `docker compose down && docker compose up -d`
+- Verify the environment variable format
+- Check for typos in IDs

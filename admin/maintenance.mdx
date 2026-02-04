@@ -1,0 +1,255 @@
+---
+title: Maintenance & Best Practices
+description: Regular maintenance and operational best practices
+---
+
+
+## Regular Maintenance Schedule
+
+### Daily
+
+- ✅ Monitor bot health
+- ✅ Check error logs
+- ✅ Review suspicious users
+- ✅ Verify payment processing
+
+### Weekly
+
+- ✅ Backup database
+- ✅ Review user access logs
+- ✅ Check resource usage
+- ✅ Test recovery procedures
+
+### Monthly
+
+- ✅ Update Docker images
+- ✅ Review security settings
+- ✅ Audit user permissions
+- ✅ Plan improvements
+
+### Quarterly
+
+- ✅ Full security audit
+- ✅ Review and rotate keys
+- ✅ Performance tuning
+- ✅ Compliance check
+
+## Database Backup
+
+<Steps>
+
+  <Step title="Manual Backup">
+  ```bash
+  docker compose exec postgres pg_dump \
+    -U remnawave \
+    -d remnawave \
+    > backup_$(date +%Y%m%d_%H%M%S).sql
+  ```
+  </Step>
+  <Step title="Automated Backup">
+  Create `/usr/local/bin/backup-bot.sh`:
+  ```bash
+  #!/bin/bash
+  DATE=$(date +%Y%m%d_%H%M%S)
+  docker compose -f /path/to/docker-compose.yaml exec postgres \
+    pg_dump -U remnawave -d remnawave \
+    > /backups/bot_$DATE.sql
+  gzip /backups/bot_$DATE.sql
+  ```
+  </Step>
+  <Step title="Add to Cron">
+  ```bash
+  crontab -e
+  # Run daily at 2 AM
+  0 2 * * * /usr/local/bin/backup-bot.sh
+  ```
+  </Step>
+  <Step title="Test Restore">
+  ```bash
+  # Verify backup is valid
+  gunzip -c backup_20241110_020000.sql.gz | head -100
+  ```
+  </Step>
+</Steps>
+
+## Updates & Upgrades
+
+### Update Bot
+
+```bash
+# Check for updates
+docker pull ghcr.io/jolymmiels/remnawave-telegram-shop-bot:latest
+
+# Update
+docker compose pull
+docker compose down
+docker compose up -d
+
+# Verify
+docker compose logs -f remnawave-telegram-shop-bot
+```
+
+### Update Dependencies
+
+Monitor for security updates:
+
+```bash
+# Check for vulnerabilities
+docker scout cves ghcr.io/jolymmiels/remnawave-telegram-shop-bot
+
+# Update base image if issues found
+docker compose build --pull
+```
+
+### Version Compatibility
+
+Always check compatibility before updating:
+
+| Remnawave     | Bot   |
+|---------------|-------|
+| 1.6           | 2.3.6 |
+| 2.0.0 - 2.1.9 | 3.2.4 |
+| 2.2.*         | 3.2.5 |
+| 2.3.*         | 3.5.* |
+
+## Security Hardening
+
+### Environment Security
+
+```bash
+# Never commit .env
+echo ".env" >> .gitignore
+
+# Restrict file permissions
+chmod 600 .env
+
+# Use strong passwords
+openssl rand -base64 32
+```
+
+### API Key Rotation
+
+```bash
+# Every 90 days
+1. Generate new key in payment/Remnawave dashboard
+2. Update .env file
+3. Restart bot
+4. Delete old key after verification
+```
+
+### Access Control
+
+- Limit admin Telegram IDs
+- Use strong authentication
+- Enable 2FA where available
+- Monitor access logs
+
+## Performance Optimization
+
+### Database Optimization
+
+```bash
+# Connect to PostgreSQL
+docker compose exec postgres psql -U remnawave -d remnawave
+
+# Check table sizes
+SELECT 
+  schemaname, 
+  tablename, 
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) 
+FROM pg_tables 
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+
+# Vacuum and analyze
+VACUUM ANALYZE;
+
+# Check index usage
+SELECT * FROM pg_stat_user_indexes ORDER BY idx_scan DESC;
+```
+
+### Server Resources
+
+Monitor and adjust:
+
+```bash
+# Check usage
+docker stats remnawave-telegram-shop-bot
+
+# Update limits in docker-compose.yaml
+services:
+  remnawave-telegram-shop-bot:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+```
+
+## Disaster Recovery
+
+### Backup Restoration
+
+```bash
+# Stop services
+docker compose down
+
+# Restore database
+gunzip -c backup_latest.sql.gz | \
+  docker compose exec -T postgres \
+  psql -U remnawave -d remnawave
+
+# Start services
+docker compose up -d
+```
+
+### Verification After Restore
+
+```bash
+# Check data integrity
+docker compose exec postgres psql -U remnawave -d remnawave \
+  -c "SELECT COUNT(*) FROM subscriptions;"
+
+# Test bot
+docker compose logs -f remnawave-telegram-shop-bot
+```
+
+## Capacity Planning
+
+Plan for growth:
+
+```
+Current Users: 1,000
+Growth Rate: 20% per month
+Estimate: 3,200 users in 6 months
+
+Resource Needs:
+- Database: +50GB
+- Bot Memory: +200MB
+- Network: +100Mbps
+```
+
+## Documentation
+
+Keep detailed records:
+
+- ✅ Configuration changes
+- ✅ Security incidents
+- ✅ Performance issues
+- ✅ User complaints
+- ✅ System upgrades
+
+## Troubleshooting Common Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Bot slow | High traffic | Scale up resources |
+| DB full | Large tables | Archive old data |
+| Payments fail | API issue | Check connectivity |
+| Memory leak | Buggy version | Update bot |
+
+## Support Resources
+
+- **GitHub Issues**: Report bugs
+- **Documentation**: This site
+- **Telegram Community**: Join group
+- **Commercial Support**: Available (contact)

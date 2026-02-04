@@ -1,0 +1,122 @@
+---
+title: Monitoring & Health Checks
+description: Monitor bot status and health
+---
+
+## Health Check Endpoint
+
+The bot provides a monitoring endpoint on the configured port.
+
+```bash
+curl http://your-bot:8080/healthcheck
+```
+
+### Response
+
+**Healthy (200 OK):**
+```json
+{
+  "status": "ok",
+  "version": "3.4.2",
+  "commit": "abc123",
+  "buildDate": "2024-11-10"
+}
+```
+
+**Error (500 Error):**
+```json
+{
+  "status": "error",
+  "message": "database connection failed"
+}
+```
+
+## What Gets Checked
+
+1. **Database** - PostgreSQL connectivity
+2. **Remnawave Panel** - API availability
+3. **Bot Service** - Process running
+4. **API Key** - Credentials valid
+
+## Monitoring Setup
+
+### Docker Compose Health Check
+
+Already configured in `docker-compose.yaml`:
+
+```yaml
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+```
+
+### Manual Monitoring
+
+Check status regularly:
+
+```bash
+# Check now
+curl -s http://localhost:8080/healthcheck | jq
+
+# Check every minute
+watch -n 60 'curl -s http://localhost:8080/healthcheck | jq'
+
+# Log results
+while true; do
+  echo "$(date): $(curl -s http://localhost:8080/healthcheck)"
+  sleep 60
+done >> /var/log/bot-health.log
+```
+
+### External Monitoring
+
+**Uptime Robot** (recommended):
+1. Go to [uptimerobot.com](https://uptimerobot.com)
+2. Add HTTP monitor
+3. URL: `https://bot.example.com/healthcheck`
+4. Interval: 5 minutes
+5. Get alerts on failures
+
+**Grafana + Prometheus**:
+- Scrape endpoint every 30s
+- Create dashboards
+- Set up alerts
+
+## Logs & Debugging
+
+### View Logs
+
+```bash
+# Current logs
+docker compose logs remnawave-telegram-shop-bot
+
+# Follow logs (live)
+docker compose logs -f remnawave-telegram-shop-bot
+
+# Last N lines
+docker compose logs --tail 100 remnawave-telegram-shop-bot
+
+# Specific time range
+docker compose logs --since 2024-11-10T10:00:00 --until 2024-11-10T11:00:00 remnawave-telegram-shop-bot
+```
+
+### Database Logs
+
+```bash
+docker compose logs -f postgres
+```
+
+### Filter Logs
+
+```bash
+# Errors only
+docker compose logs remnawave-telegram-shop-bot | grep ERROR
+
+# Payment related
+docker compose logs remnawave-telegram-shop-bot | grep -i payment
+
+# Specific user
+docker compose logs remnawave-telegram-shop-bot | grep "user_id:123456789"
+```

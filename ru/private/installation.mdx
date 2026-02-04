@@ -1,0 +1,855 @@
+---
+title: Установка
+description: Пошаговая инструкция по установке приватной версии Remnawave Telegram Shop Bot
+---
+
+
+<Warning>
+  **Требуется бекап**
+Перед любыми действиями ниже обязательно **[сделайте бекап базы данных](/ru/private/backup/)** и конфигурационных файлов.
+</Warning>
+
+## Требования
+
+- Linux сервер или VPS
+- Установленные Docker и Docker Compose
+- Доменное имя с SSL-сертификатом
+- Реверс-прокси (Caddy или Nginx)
+- Установленная и настроенная панель Remnawave
+- Файл Docker образа приватной версии (`.tar`)
+
+---
+
+## Варианты установки
+
+Выберите способ установки в зависимости от вашей конфигурации:
+
+<Tabs>
+  <Tab title="На сервере с Remnawave">
+    
+### Установка рядом с панелью Remnawave
+
+Используйте этот способ, если бот будет работать на **том же сервере**, что и панель Remnawave. Бот подключается к Remnawave через внутреннюю Docker-сеть.
+
+<Steps>
+
+  <Step title="Создайте директорию проекта">
+  ```bash
+  mkdir -p /opt/private-remnawave-telegram-shop-bot
+  cd /opt/private-remnawave-telegram-shop-bot
+  ```
+  </Step>
+  <Step title="Загрузите Docker образ">
+
+  Скачайте файл образа из приватного канала.
+
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Создайте необходимые директории">
+  ```bash
+  mkdir -p uploads translations
+  sudo chmod -R 777 uploads translations
+  ```
+  </Step>
+  <Step title="Скачайте файлы переводов">
+
+  Скачайте `en.json` и `ru.json` из приватного канала и поместите в папку `translations`:
+  ```bash
+  # Скопируйте скачанные файлы в директорию translations
+  cp en.json ru.json ./translations/
+  ```
+  </Step>
+  <Step title="Создайте конфигурацию Docker Compose">
+  ```bash
+  nano compose.yaml
+  ```
+
+  ```yaml
+  name: rwp_shop
+
+  services:
+    bot:
+      image: rwp_shop:<VERSION>
+      container_name: rwp_shop
+      restart: unless-stopped
+      ports:
+        - "127.0.0.1:9912:8080"
+      depends_on:
+        db:
+          condition: service_healthy
+      volumes:
+        - ./translations:/translations
+        - ./uploads:/uploads
+        - /etc/machine-id:/etc/machine-id:ro
+      environment:
+        - REMNAWAVE_URL=${REMNAWAVE_URL}
+        - REMNAWAVE_TOKEN=${REMNAWAVE_TOKEN}
+        - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+        - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
+        - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+        - BOT_ADMIN_URL=${BOT_ADMIN_URL}
+        - LOG_LEVEL=${LOG_LEVEL:-info}
+        - ACCESS_LOG_ENABLED=${ACCESS_LOG_ENABLED:-true}
+        - ACCESS_LOG_PATH=${ACCESS_LOG_PATH:-}
+        - LICENSE_KEY=${LICENSE_KEY:-}
+        - REMNAWAVE_HEADERS=${REMNAWAVE_HEADERS:-}
+      networks:
+        - remnawave-network
+
+    db:
+      image: postgres:17-alpine
+      container_name: rwp_shop_db
+      restart: unless-stopped
+      environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - TZ=UTC
+      ports:
+        - "127.0.0.1:9999:5432"
+      volumes:
+        - rwp_shop_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+        interval: 3s
+        timeout: 10s
+        retries: 3
+      networks:
+        - remnawave-network
+
+  volumes:
+    rwp_shop_db_data:
+
+  networks:
+    remnawave-network:
+      name: remnawave-network
+      external: true
+  ```
+
+  <Note>
+  Сеть `remnawave-network` создаётся панелью Remnawave. Параметр `external: true` подключает к существующей сети.
+  </Note>
+  </Step>
+  <Step title="Создайте файл окружения">
+  ```bash
+  nano .env
+  ```
+
+  ```bash
+  # Подключение к Remnawave (внутренняя Docker-сеть)
+  REMNAWAVE_URL=http://remnawave:3000
+  REMNAWAVE_TOKEN=ваш_api_токен_remnawave
+
+  # Telegram
+  TELEGRAM_TOKEN=ваш_токен_telegram_бота
+  ADMIN_TELEGRAM_ID=123456789,987654321
+
+  # База данных
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=postgres
+
+  # URL админ-панели (требуется HTTPS)
+  BOT_ADMIN_URL=https://bot.example.com
+
+  # Логирование (опционально)
+  # LOG_LEVEL=info
+  # ACCESS_LOG_ENABLED=true
+  # ACCESS_LOG_PATH=
+
+  LICENSE_KEY=
+
+  # Пользовательские заголовки для Remnawave API (опционально)
+  # REMNAWAVE_HEADERS=
+       ```
+
+  <Tip>
+  `REMNAWAVE_URL=http://remnawave:3000` использует имя контейнера из Docker-сети Remnawave.
+  </Tip>
+
+  <Tip>
+    **Remnawave Reverse-Proxy (egames)**
+  Если вы используете [Remnawave Reverse-Proxy от egames](https://wiki.egam.es/), добавьте cookie для авторизации:
+  ```bash
+  REMNAWAVE_HEADERS=Cookie:rEmnaprx=aBCDefgh
+  ```
+  Как получить cookie: [инструкция](https://wiki.egam.es/ru/troubleshooting/common-issues/#утерянный-cookie-пути-к-панели)
+  </Tip>
+
+  <Note>
+    **Переменные логирования**
+  - `LOG_LEVEL` — уровень логирования (debug, info, warn, error)
+  - `ACCESS_LOG_ENABLED` — включить/выключить access-логи (true/false)
+  - `ACCESS_LOG_PATH` — путь к файлу логов; если не указан, логи выводятся в консоль
+  </Note>
+
+  <Warning>
+    **Лицензионный ключ**
+  `LICENSE_KEY` обязателен для работы бота. Вы можете получить его в личном кабинете на сервере лицензий после покупки подписки.
+  </Warning>
+  </Step>
+  <Step title="Добавьте volume machine-id для лицензии">
+
+  Лицензия привязана к уникальному идентификатору вашего сервера. Добавьте этот volume в `compose.yaml` в секцию `bot`:
+  ```yaml
+  volumes:
+    - ./translations:/translations
+    - ./uploads:/uploads
+    - /etc/machine-id:/etc/machine-id:ro
+  ```
+
+  <Note>
+  Это гарантирует, что лицензия останется действительной даже при пересоздании контейнера.
+  </Note>
+  </Step>
+  <Step title="Запустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+  </Tab>
+  <Tab title="На отдельном сервере">
+
+### Установка на отдельном сервере
+
+Используйте этот способ, если бот будет работать на **другом сервере**, отличном от панели Remnawave. Бот подключается к Remnawave через внешний HTTPS URL.
+
+<Steps>
+
+  <Step title="Создайте директорию проекта">
+  ```bash
+  mkdir -p /opt/private-remnawave-telegram-shop-bot
+  cd /opt/private-remnawave-telegram-shop-bot
+  ```
+  </Step>
+  <Step title="Загрузите Docker образ">
+
+  Скачайте файл образа из приватного канала.
+
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Создайте необходимые директории">
+  ```bash
+  mkdir -p uploads translations
+  sudo chmod -R 777 uploads translations
+  ```
+  </Step>
+  <Step title="Скачайте файлы переводов">
+
+  Скачайте `en.json` и `ru.json` из приватного канала и поместите в папку `translations`:
+  ```bash
+  # Скопируйте скачанные файлы в директорию translations
+  cp en.json ru.json ./translations/
+  ```
+  </Step>
+  <Step title="Создайте конфигурацию Docker Compose">
+  ```bash
+  nano compose.yaml
+  ```
+
+  ```yaml
+  name: rwp_shop
+
+  services:
+    bot:
+      image: rwp_shop:<VERSION>
+      container_name: rwp_shop
+      restart: unless-stopped
+      ports:
+        - "127.0.0.1:9912:8080"
+      depends_on:
+        db:
+          condition: service_healthy
+      volumes:
+        - ./translations:/translations
+        - ./uploads:/uploads
+        - /etc/machine-id:/etc/machine-id:ro
+      environment:
+        - REMNAWAVE_URL=${REMNAWAVE_URL}
+        - REMNAWAVE_TOKEN=${REMNAWAVE_TOKEN}
+        - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+        - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
+        - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
+        - BOT_ADMIN_URL=${BOT_ADMIN_URL}
+        - LOG_LEVEL=${LOG_LEVEL:-info}
+        - ACCESS_LOG_ENABLED=${ACCESS_LOG_ENABLED:-true}
+        - ACCESS_LOG_PATH=${ACCESS_LOG_PATH:-}
+        - LICENSE_KEY=${LICENSE_KEY:-}
+        - REMNAWAVE_HEADERS=${REMNAWAVE_HEADERS:-}
+
+    db:
+      image: postgres:17-alpine
+      container_name: rwp_shop_db
+      restart: unless-stopped
+      environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - TZ=UTC
+      ports:
+        - "127.0.0.1:9999:5432"
+      volumes:
+        - rwp_shop_db_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+        interval: 3s
+        timeout: 10s
+        retries: 3
+
+  volumes:
+    rwp_shop_db_data:
+  ```
+  </Step>
+  <Step title="Создайте файл окружения">
+  ```bash
+  nano .env
+  ```
+
+  ```bash
+  # Подключение к Remnawave (внешний HTTPS URL)
+  REMNAWAVE_URL=https://panel.example.com
+  REMNAWAVE_TOKEN=ваш_api_токен_remnawave
+
+  # Telegram
+  TELEGRAM_TOKEN=ваш_токен_telegram_бота
+  ADMIN_TELEGRAM_ID=123456789,987654321
+
+  # База данных
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=postgres
+
+  # URL админ-панели (требуется HTTPS)
+  BOT_ADMIN_URL=https://bot.example.com
+
+  # Логирование (опционально)
+  # LOG_LEVEL=info
+  # ACCESS_LOG_ENABLED=true
+  # ACCESS_LOG_PATH=
+
+  LICENSE_KEY=
+
+  # Пользовательские заголовки для Remnawave API (опционально)
+  # REMNAWAVE_HEADERS=
+  ```
+
+  <Warning>
+  `REMNAWAVE_URL` должен быть **внешним HTTPS URL** вашей панели Remnawave (например, `https://panel.example.com`).
+  </Warning>
+
+  <Tip>
+    **Remnawave Reverse-Proxy (egames)**
+  Если вы используете [Remnawave Reverse-Proxy от egames](https://wiki.egam.es/), добавьте cookie для авторизации:
+  ```bash
+  REMNAWAVE_HEADERS=Cookie:rEmnaprx=aBCDefgh
+  ```
+  Как получить cookie: [инструкция](https://wiki.egam.es/ru/troubleshooting/common-issues/#утерянный-cookie-пути-к-панели)
+  </Tip>
+
+  <Note>
+    **Переменные логирования**
+  - `LOG_LEVEL` — уровень логирования (debug, info, warn, error)
+  - `ACCESS_LOG_ENABLED` — включить/выключить access-логи (true/false)
+  - `ACCESS_LOG_PATH` — путь к файлу логов; если не указан, логи выводятся в консоль
+  </Note>
+
+  <Warning>
+    **Лицензионный ключ**
+  `LICENSE_KEY` обязателен для работы бота. Вы можете получить его в личном кабинете на сервере лицензий после покупки подписки.
+  </Warning>
+  </Step>
+  <Step title="Добавьте volume machine-id для лицензии">
+
+  Лицензия привязана к уникальному идентификатору вашего сервера. Добавьте этот volume в `compose.yaml` в секцию `bot`:
+  ```yaml
+  volumes:
+    - ./translations:/translations
+    - ./uploads:/uploads
+    - /etc/machine-id:/etc/machine-id:ro
+  ```
+
+  <Note>
+  Это гарантирует, что лицензия останется действительной даже при пересоздании контейнера.
+  </Note>
+  </Step>
+  <Step title="Запустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+  </Tab>
+</Tabs>
+
+---
+
+## Настройка реверс-прокси
+
+<Note>
+  **Кеширование**
+Конфигурации ниже включают правила кеширования для защиты Mini App от ошибок загрузки после обновлений:
+- HTML-файлы не кешируются (всегда актуальная версия)
+- Статические ресурсы `/assets/` кешируются на год (имеют уникальные хеши)
+</Note>
+
+<Warning>
+  **Для отдельного сервера**
+Примеры ниже предназначены для **системной установки** Caddy/Nginx (через systemd). Если вы используете Caddy/Nginx в Docker-контейнере, вам нужно либо объединить их в одну Docker-сеть и скрыть порты, либо использовать `host.docker.internal` вместо `127.0.0.1`.
+</Warning>
+
+<Tabs>
+  <Tab title="Caddy">
+    Добавьте в Caddyfile:
+    ```txt
+    (security_headers) {
+        header * {
+            Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+            X-Content-Type-Options "nosniff"
+            X-Frame-Options "SAMEORIGIN"
+            X-XSS-Protection "1; mode=block"
+            -Server
+            Referrer-Policy strict-origin-when-cross-origin
+            X-Robots-Tag "noindex, nofollow"
+        }
+    }
+
+    bot.example.com {
+        import security_headers
+
+        @html path_regexp \.html$|^/$
+        header @html Cache-Control "no-cache, no-store, must-revalidate"
+        
+        @assets_js path /assets/*.js
+        header @assets_js Cache-Control "no-cache, no-store, must-revalidate"
+        
+        @immutable {
+            path /assets/*
+            not path *.js
+        }
+        header @immutable Cache-Control "public, max-age=31536000, immutable"
+        
+        reverse_proxy 127.0.0.1:9912
+    }
+    ```
+    
+    Перезапустите Caddy:
+    ```bash
+    sudo systemctl reload caddy
+    ```
+  </Tab>
+  <Tab title="Nginx">
+    Создайте конфиг:
+    ```bash
+    sudo nano /etc/nginx/sites-available/bot.example.com
+    ```
+    
+    ```nginx
+    server {
+        listen 80;
+        server_name bot.example.com;
+
+        location ~* \.html$ {
+            add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+            proxy_pass http://127.0.0.1:9912;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location ~* ^/assets/.*\.js$ {
+            add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+            proxy_pass http://127.0.0.1:9912;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location /assets/ {
+            add_header Cache-Control "public, max-age=31536000, immutable" always;
+            proxy_pass http://127.0.0.1:9912;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location / {
+            proxy_pass http://127.0.0.1:9912;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            
+            client_max_body_size 50M;
+        }
+    }
+    ```
+    
+    Активируйте и перезапустите:
+    ```bash
+    sudo ln -s /etc/nginx/sites-available/bot.example.com /etc/nginx/sites-enabled/
+    sudo nginx -t
+    sudo systemctl reload nginx
+    ```
+  </Tab>
+</Tabs>
+
+### Редирект URL-схем для Windows (опционально)
+
+Для пользователей Windows кастомные URL-схемы (такие как `happ://`, `v2ray://`, `clash://`) могут не открываться напрямую из Telegram. Добавьте endpoint `/redir` для обработки таких редиректов:
+
+<Tabs>
+  <Tab title="Caddy">
+    Добавьте внутри блока домена **перед** `reverse_proxy`:
+    ```txt
+@redir {
+    path /redir
+    expression {http.request.uri.query} != ""
+}
+
+route @redir {
+    uri replace + %2B
+
+    redir {query.url} 302
+}
+    ```
+    
+    Полный пример:
+    ```txt
+    bot.example.com {
+        import security_headers
+
+        @redir {
+            path /redir
+            expression {http.request.uri.query} != ""
+        }
+
+        route @redir {
+            uri replace + %2B
+
+            redir {query.url} 302
+        }
+        
+        # ... остальная конфигурация
+        reverse_proxy 127.0.0.1:9912
+    }
+    ```
+  </Tab>
+  <Tab title="Nginx">
+    Добавьте внутри блока `server`:
+    ```nginx
+    location = /redir {
+        if ($arg_url) {
+            return 302 $arg_url;
+        }
+        return 400;
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+Это позволяет Mini App перенаправлять пользователей Windows через `https://bot.example.com/redir?url=happ://...`, который затем выполняет 302 редирект на кастомную URL-схему.
+</Note>
+
+---
+
+## Проверка установки
+
+```bash
+docker compose logs -f bot
+```
+
+---
+
+## Настройка access-логов с ротацией
+
+Для записи access-логов в файл с автоматической ротацией:
+
+<Steps>
+
+  <Step title="Создайте директорию для логов">
+  ```bash
+  mkdir -p logs
+  sudo chmod 777 logs
+  ```
+  </Step>
+  <Step title="Добавьте volume в compose.yaml">
+
+  В секции `bot` добавьте:
+  ```yaml
+  volumes:
+    - ./translations:/translations
+    - ./uploads:/uploads
+    - ./logs:/logs
+  ```
+  </Step>
+  <Step title="Укажите путь к логам в .env">
+  ```bash
+  ACCESS_LOG_PATH=/logs/access.log
+  ```
+  </Step>
+  <Step title="Перезапустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+  <Step title="Установите logrotate">
+  (если не установлен)
+  ```bash
+  # Debian/Ubuntu
+  sudo apt update && sudo apt install -y logrotate
+
+  # CentOS/RHEL/Fedora
+  sudo dnf install -y logrotate
+  ```
+  </Step>
+  <Step title="Создайте конфиг logrotate">
+  ```bash
+  sudo nano /etc/logrotate.d/rwp-shop
+  ```
+
+  ```txt
+  /opt/private-remnawave-telegram-shop-bot/logs/access.log {
+      daily
+      rotate 14
+      compress
+      delaycompress
+      missingok
+      notifempty
+      copytruncate
+  }
+  ```
+
+  <Note>
+  Замените путь `/opt/private-remnawave-telegram-shop-bot/logs/access.log` на ваш фактический путь установки.
+  </Note>
+  </Step>
+  <Step title="Проверьте конфигурацию">
+  ```bash
+  sudo logrotate -d /etc/logrotate.d/rwp-shop
+  ```
+
+  Флаг `-d` запускает в debug-режиме без реальной ротации.
+  </Step>
+  <Step title="Тестовый запуск ротации">
+  ```bash
+  sudo logrotate -f /etc/logrotate.d/rwp-shop
+  ```
+
+  Флаг `-f` принудительно выполняет ротацию.
+  </Step>
+</Steps>
+
+<Tip>
+`copytruncate` позволяет ротировать логи без перезапуска контейнера — файл обрезается на месте после копирования.
+</Tip>
+
+<Note>
+  **Автоматический запуск**
+Logrotate обычно запускается автоматически через cron или systemd timer (ежедневно). Проверить можно:
+```bash
+# Для systemd
+systemctl status logrotate.timer
+
+# Для cron
+cat /etc/cron.daily/logrotate
+```
+</Note>
+
+| Параметр | Описание |
+|----------|----------|
+| `daily` | Ротация раз в день |
+| `rotate 14` | Хранить 14 архивов |
+| `compress` | Сжимать архивы gzip |
+| `delaycompress` | Сжимать со второго архива |
+| `missingok` | Не ругаться если файла нет |
+| `notifempty` | Не ротировать пустой файл |
+| `copytruncate` | Копировать и обрезать без перезапуска |
+
+---
+
+## S3 хранилище (опционально)
+
+По умолчанию загруженные файлы (вложения поддержки, изображения FAQ, файлы партнёров) хранятся локально в директории `./uploads`. Опционально можно использовать S3-совместимое хранилище (MinIO, RustFS, AWS S3 и др.) для лучшей масштабируемости и надёжности.
+
+<Steps>
+
+  <Step title="Добавьте переменные S3 в .env">
+  ```bash
+  # S3 хранилище (опционально)
+  S3_ENABLED=true
+  S3_ENDPOINT=http://rustfs:9000
+  S3_ACCESS_KEY=your_access_key
+  S3_SECRET_KEY=your_secret_key
+  S3_PUBLIC_URL=https://s3.example.com
+  ```
+  </Step>
+  <Step title="Добавьте сервис S3 в compose.yaml">
+  (при использовании RustFS)
+  ```yaml
+  rustfs:
+    image: ghcr.io/rustfs/rustfs:latest
+    container_name: rwp_shop_rustfs
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      - RUSTFS_ROOT_USER=your_access_key
+      - RUSTFS_ROOT_PASSWORD=your_secret_key
+    volumes:
+      - rustfs_data:/data
+    ports:
+      - "127.0.0.1:9001:9001"
+    networks:
+      - remnawave-network
+  ```
+
+  Добавьте volume:
+  ```yaml
+  volumes:
+    rwp_shop_db_data:
+    rustfs_data:
+  ```
+  </Step>
+  <Step title="Настройте reverse proxy для S3">
+
+  Добавьте поддомен для публичного доступа к S3 (требуется для presigned URLs):
+
+  <Tabs>
+    <Tab title="Caddy">
+      ```
+      s3.example.com {
+          import security_headers
+          reverse_proxy rustfs:9000
+      }
+      ```
+    </Tab>
+    <Tab title="Nginx">
+      ```nginx
+      server {
+          listen 443 ssl http2;
+          server_name s3.example.com;
+
+          location / {
+              proxy_pass http://127.0.0.1:9000;
+              proxy_set_header Host $host;
+              client_max_body_size 100M;
+          }
+      }
+      ```
+    </Tab>
+  </Tabs>
+  </Step>
+  <Step title="Перезапустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+<Note>
+  **Переменные окружения**
+| Переменная | Описание |
+|------------|----------|
+| `S3_ENABLED` | Включить S3 хранилище (`true`/`false`) |
+| `S3_ENDPOINT` | Внутренний endpoint S3 (для Docker: `http://rustfs:9000`) |
+| `S3_ACCESS_KEY` | Ключ доступа S3 |
+| `S3_SECRET_KEY` | Секретный ключ S3 |
+| `S3_PUBLIC_URL` | Публичный HTTPS URL для presigned URLs |
+</Note>
+
+<Warning>
+  **S3_PUBLIC_URL обязателен**
+`S3_PUBLIC_URL` должен быть установлен на публично доступный HTTPS URL. Используется для генерации presigned URLs, позволяющих прямую загрузку файлов из S3.
+</Warning>
+
+---
+
+## Справка по портам
+
+| Сервис | Внутренний порт | Рекомендуемый внешний |
+|--------|-----------------|----------------------|
+| Bot HTTP | 8080 | 9912 или 12345 |
+| PostgreSQL | 5432 | - |
+
+---
+
+## После установки
+
+После установки:
+
+1. Откройте `https://bot.example.com` в Telegram Mini App
+2. Войдите с вашим админским Telegram-аккаунтом
+3. Настройте параметры в админ-панели:
+   - Платёжные системы
+   - Тарифные планы
+   - Брендинг
+   - Роли и разрешения
+
+Все остальные настройки управляются через **UI админ-панели**.
+
+---
+
+## Полезные советы
+
+<Tip>
+  **Возникли проблемы?**
+Смотрите страницу [Устранение неполадок](/ru/private/troubleshooting/) для решения распространённых проблем.
+</Tip>
+
+### Добавление кнопки меню в Telegram
+
+Чтобы добавить кнопку "Open" в Telegram, которая открывает личный кабинет вместо набора команд:
+
+1. Откройте [@BotFather](https://t.me/BotFather)
+2. Выберите вашего бота
+3. Перейдите в **Bot Settings** → **Menu Button**
+4. Укажите URL вашего дашборда:
+   ```
+   https://bot.example.com
+   ```
+
+Это добавит кнопку в чате Telegram, которая открывает Mini App с личным кабинетом пользователя.
+
+### Настройка кнопки Mini App
+
+Чтобы добавить Mini App как кнопку, которая появляется при нажатии на меню или команде `/start`:
+
+1. Откройте [@BotFather](https://t.me/BotFather)
+2. Отправьте команду `/newapp`
+3. Выберите вашего бота из списка
+4. Следуйте инструкциям:
+   - **Title**: Введите название приложения (например, "Личный кабинет")
+   - **Description**: Краткое описание приложения
+   - **Photo**: Загрузите изображение 640x360 для превью
+   - **GIF** (опционально): Загрузите демо-анимацию
+   - **Web App URL**: Введите URL вашего дашборда (например, `https://bot.example.com`)
+5. После создания отправьте `/myapps` для управления Mini Apps
+
+<Tip>
+Вы также можете использовать `/setmenubutton` для настройки кнопки меню напрямую без создания полной записи Mini App.
+</Tip>
+
+### Настройка входа через браузер (Direct Links)
+
+Чтобы пользователи могли открывать Mini App напрямую в браузере через ссылки `t.me` (без использования встроенного браузера Telegram), необходимо настроить домен в BotFather:
+
+1. Откройте [@BotFather](https://t.me/BotFather)
+2. Отправьте команду `/setdomain`
+3. Выберите вашего бота из списка
+4. Введите домен из админки бота (например, `bot.example.com`)
+
+<Note>
+Домен должен совпадать со значением `BOT_ADMIN_URL` (без префикса `https://`).
+</Note>
+
+После этой настройки пользователи смогут открывать Mini App через прямые ссылки в браузере.

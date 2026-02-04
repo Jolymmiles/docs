@@ -1,0 +1,164 @@
+---
+title: Переменные окружения
+description: Полный справочник всех переменных конфигурации
+---
+
+## Основная конфигурация
+
+| Переменная | Описание                      | Пример |
+|-----------|-------------------------------|---------|
+| `TELEGRAM_TOKEN` | Токен API Telegram бота       | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
+| `DATABASE_URL` | Строка подключения PostgreSQL | `postgresql://user:pass@postgres:5432/remnawave` |
+| `REMNAWAVE_URL` | URL API панели Remnawave      | `https://panel.example.com` |
+| `REMNAWAVE_TOKEN` | Токен API Remnawave           | `your_token` |
+| `ADMIN_TELEGRAM_ID` | Telegram ID администратора    | `123456789` |
+
+## Конфигурация ценообразования
+
+```bash
+PRICE_1=5
+PRICE_3=12
+PRICE_6=20
+PRICE_12=35
+DAYS_IN_MONTH=30
+```
+
+Для Telegram Stars:
+```bash
+STARS_PRICE_1=50
+STARS_PRICE_3=120
+STARS_PRICE_6=200
+STARS_PRICE_12=350
+```
+
+## Параметры подписок и пробных периодов
+
+```bash
+REMNAWAVE_TAG=paying_user
+TRIAL_REMNAWAVE_TAG=trial_user
+TRIAL_DAYS=7
+TRIAL_TRAFFIC_LIMIT=10
+TRAFFIC_LIMIT=100
+TRAFFIC_LIMIT_RESET_STRATEGY=MONTH
+TRIAL_TRAFFIC_LIMIT_RESET_STRATEGY=MONTH
+REFERRAL_DAYS=0
+```
+
+**Стратегия сброса лимита трафика:**
+- `DAY` - Лимит трафика сбрасывается каждый день
+- `WEEK` - Лимит трафика сбрасывается каждую неделю
+- `MONTH` - Лимит трафика сбрасывается каждый месяц (по умолчанию)
+- `NO_RESET` - Лимит трафика никогда не сбрасывается
+
+## Платежные системы
+
+### YooKassa
+```bash
+YOOKASA_ENABLED=true
+YOOKASA_SHOP_ID=your_id
+YOOKASA_SECRET_KEY=your_key
+YOOKASA_EMAIL=your_email@example.com
+YOOKASA_URL=https://payment.yandex.net
+```
+
+### CryptoPay
+```bash
+CRYPTO_PAY_ENABLED=true
+CRYPTO_PAY_TOKEN=your_token
+CRYPTO_PAY_URL=https://pay.crypt.bot
+```
+
+### Telegram Stars
+```bash
+TELEGRAM_STARS_ENABLED=true
+REQUIRE_PAID_PURCHASE_FOR_STARS=false
+```
+
+### Tribute
+```bash
+TRIBUTE_WEBHOOK_URL=/tribute/webhook
+TRIBUTE_API_KEY=your_key
+TRIBUTE_PAYMENT_URL=https://t.me/tribute/app?startapp=...
+HEALTH_CHECK_PORT=8080
+```
+
+## Интерфейс и ссылки
+
+```bash
+DEFAULT_LANGUAGE=ru
+IS_WEB_APP_LINK=false
+MINI_APP_URL=https://example.com/app
+SERVER_STATUS_URL=https://status.example.com
+SUPPORT_URL=https://t.me/support
+FEEDBACK_URL=https://example.com/feedback
+CHANNEL_URL=https://t.me/channel
+TOS_URL=https://example.com/tos
+```
+
+## Управление пользователями
+
+```bash
+BLOCKED_TELEGRAM_IDS=123456789,987654321
+WHITELISTED_TELEGRAM_IDS=111111111,222222222
+```
+
+## Конфигурация БД
+
+```bash
+POSTGRES_USER=remnawave
+POSTGRES_PASSWORD=secure_password
+POSTGRES_DB=remnawave
+```
+
+## Конфигурация сервера
+
+```bash
+HEALTH_CHECK_PORT=8080
+REMNAWAVE_MODE=remote
+```
+
+## Заголовки API Remnawave
+
+Настройте пользовательские заголовки для всех запросов к API Remnawave:
+
+```bash
+REMNAWAVE_HEADERS=X-Api-Key:your_api_key;X-Custom-Header:value
+```
+
+**Формат:** `key1:value1;key2:value2;key3:value3`
+
+**Примеры:**
+
+```bash
+# С API Key
+REMNAWAVE_HEADERS=X-Api-Key:your_secret_key
+
+# Несколько заголовков
+REMNAWAVE_HEADERS=X-Api-Key:secret123;X-Custom-Header:custom_value
+
+# С авторизацией
+REMNAWAVE_HEADERS=Authorization:Bearer token123;X-Request-ID:12345
+
+# Cookie для Remnawave Reverse-Proxy (egames)
+# Получить cookie: https://wiki.egam.es/ru/troubleshooting/common-issues/#утерянный-cookie-пути-к-панели
+REMNAWAVE_HEADERS=Cookie:rEmnaprx=aBCDefgh
+```
+
+**Возможности:**
+- Поддержка неограниченного количества пользовательских заголовков
+- Заголовки применяются ко всем запросам к API Remnawave
+- Пробелы вокруг ключей и значений автоматически удаляются
+- Некорректные заголовки пропускаются
+- Количество загруженных заголовков логируется при запуске
+
+**Миграция с X_API_KEY:**
+
+Если вы использовали переменную `X_API_KEY`, выполните миграцию на `REMNAWAVE_HEADERS`:
+
+```bash
+# Старая конфигурация
+X_API_KEY=your_key
+
+# Новая конфигурация
+REMNAWAVE_HEADERS=X-Api-Key:your_key
+```

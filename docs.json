@@ -1,122 +1,166 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Remnawave Telegram Shop Bot",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0B89F8",
+    "light": "#22D6F9",
+    "dark": "#012F7F"
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Guides",
+        "language": "en",
+        "label": "English",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "getting-started/overview",
+              "getting-started/setup"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Configuration",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "configuration/variables",
+              "configuration/squads",
+              "configuration/security"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Features",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "features/core",
+              "features/payments",
+              "features/subscriptions"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Payment systems",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "payments/yookassa",
+              "payments/cryptopay",
+              "payments/telegram-stars",
+              "payments/tribute"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "admin/commands",
+              "admin/users",
+              "admin/monitoring",
+              "admin/maintenance"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/issues",
+              "troubleshooting/logs"
+            ]
+          },
+          {
+            "group": "Private version",
+            "pages": [
+              "private/overview",
+              "private/installation",
+              "private/update",
+              "private/backup",
+              "private/troubleshooting"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "language": "ru",
+        "label": "Русский",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Начало",
             "pages": [
-              "api-reference/introduction"
+              "ru/index",
+              "ru/getting-started/overview",
+              "ru/getting-started/setup"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Конфигурация",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "ru/configuration/variables",
+              "ru/configuration/squads",
+              "ru/configuration/security"
+            ]
+          },
+          {
+            "group": "Возможности",
+            "pages": [
+              "ru/features/core",
+              "ru/features/payments",
+              "ru/features/subscriptions"
+            ]
+          },
+          {
+            "group": "Платежные системы",
+            "pages": [
+              "ru/payments/yookassa",
+              "ru/payments/cryptopay",
+              "ru/payments/telegram-stars",
+              "ru/payments/tribute"
+            ]
+          },
+          {
+            "group": "Администрирование",
+            "pages": [
+              "ru/admin/commands",
+              "ru/admin/users",
+              "ru/admin/monitoring",
+              "ru/admin/maintenance"
+            ]
+          },
+          {
+            "group": "Устранение неполадок",
+            "pages": [
+              "ru/troubleshooting/issues",
+              "ru/troubleshooting/logs"
+            ]
+          },
+          {
+            "group": "Приватная версия",
+            "pages": [
+              "ru/private/overview",
+              "ru/private/installation",
+              "ru/private/update",
+              "ru/private/backup",
+              "ru/private/troubleshooting"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    ]
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "GitHub",
+        "href": "https://github.com/Jolymmiels/remnawave-telegram-shop"
+      },
+      {
+        "label": "Telegram",
+        "href": "https://t.me/remnawavetelegramshop"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/Jolymmiels/remnawave-telegram-shop"
     }
   }
 }

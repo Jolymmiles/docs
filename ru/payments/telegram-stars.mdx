@@ -1,0 +1,52 @@
+---
+title: Настройка Telegram Stars
+description: Настройте Telegram Stars для встроенных платежей
+---
+
+Telegram Stars - это встроенная в Telegram система платежей, обеспечивающая удобство платежей для пользователей.
+
+## Инструкции по настройке
+
+1. **Включите Stars в BotFather**
+   - Откройте [@BotFather](https://t.me/BotFather)
+   - Выберите вашего бота
+   - Bot Settings → Payments → Stars
+   - Включите Telegram Stars
+
+2. **Настройте цены**
+   ```bash
+   TELEGRAM_STARS_ENABLED=true
+   STARS_PRICE_1=50
+   STARS_PRICE_3=120
+   STARS_PRICE_6=200
+   STARS_PRICE_12=350
+   ```
+
+3. **Опционально: Требовать предварительный платеж**
+   ```bash
+   REQUIRE_PAID_PURCHASE_FOR_STARS=true
+   ```
+   
+   Требует от пользователей завершить платеж картой или криптовалютой перед использованием Stars.
+
+4. **Перезагрузите бота**
+   ```bash
+   docker compose down && docker compose up -d
+   ```
+
+## Переменные конфигурации
+
+| Переменная | Описание |
+|----------|-------------|
+| `TELEGRAM_STARS_ENABLED` | Включить платежи Stars |
+| `STARS_PRICE_1` | Цена в Stars за 1 месяц |
+| `STARS_PRICE_3` | Цена в Stars за 3 месяца |
+| `STARS_PRICE_6` | Цена в Stars за 6 месяцев |
+| `STARS_PRICE_12` | Цена в Stars за 12 месяцев |
+| `REQUIRE_PAID_PURCHASE_FOR_STARS` | Требовать предварительный платеж |
+
+## Поддержка
+
+- **BotFather**: [@BotFather](https://t.me/BotFather)
+- **Документация Telegram**: [core.telegram.org/bots/payments](https://core.telegram.org/bots/payments)
+- **Проблемы**: Сообщайте на GitHub

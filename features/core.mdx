@@ -1,0 +1,124 @@
+---
+title: Core Features
+description: Main capabilities of Remnawave Telegram Shop Bot
+---
+
+## Subscription Management
+
+### Multiple Plans
+
+- **1 Month**: Quick trial or short-term access
+- **3 Months**: Popular mid-term option
+- **6 Months**: Better value proposition
+- **12 Months**: Best value with highest discount
+
+### Automatic Notifications
+
+- Runs daily at **16:00 UTC**
+- Notifies users **3 days before** expiration
+- Includes exact expiration date
+- Provides convenient renewal button
+- Multi-language support (Russian/English)
+
+## User Management
+
+### Built-in Filtering
+
+- **Suspicious Account Detection**: Prevents phishing accounts
+- **Whitelist Support**: Bypass checks for trusted users
+- **Blacklist Support**: Block specific users
+- **Service Account Recognition**: Allow legitimate bots
+
+### Trial System
+
+```bash
+TRIAL_DAYS=7
+TRIAL_TRAFFIC_LIMIT=10
+TRIAL_REMNAWAVE_TAG=trial_user
+```
+
+- Attract new users with free trial
+- Limit traffic to prevent abuse
+- Track trial users separately
+- Optional separate squad assignment
+
+## Dynamic UI
+
+Buttons are shown/hidden based on configuration:
+
+| Button | Required Variable | Use Case |
+|--------|------------------|----------|
+| Main Menu | Always shown | Navigation |
+| Purchase | Always shown | Buy subscription |
+| Connect | Always shown | Get VPN config |
+| Server Status | `SERVER_STATUS_URL` | System health |
+| Support | `SUPPORT_URL` | Get help |
+| Feedback | `FEEDBACK_URL` | Send feedback |
+| Channel | `CHANNEL_URL` | Community |
+| TOS | `TOS_URL` | Legal info |
+
+## Multi-language Support
+
+Supported languages:
+- **Russian** (default)
+- **English**
+
+```bash
+DEFAULT_LANGUAGE=ru
+```
+
+All messages customizable via translation files in `translations/` folder.
+
+## Health Checks
+
+The bot provides monitoring endpoints:
+
+```bash
+curl http://your-bot:8080/healthcheck
+```
+
+Checks:
+- Database connectivity
+- Remnawave panel availability
+- Bot service status
+- API key validity
+
+## Admin Commands
+
+```
+/sync - Synchronize users from Remnawave
+```
+
+Fetches all users from panel and updates database, removing any users no longer present in Remnawave.
+
+## Squad Management
+
+### Internal Squads
+- Control which connection methods users access
+- Multiple squads per user supported
+- Independent configuration for trials
+
+### External Squads
+- Single squad UUID
+- Included in all user operations
+- Optional assignment
+
+## Traffic Management
+
+```bash
+TRAFFIC_LIMIT=100
+TRIAL_TRAFFIC_LIMIT=10
+```
+
+- Set traffic limit per subscription
+- Separate limits for regular and trial users
+- 0 = unlimited traffic
+
+## Referral System (Optional)
+
+```bash
+REFERRAL_DAYS=30
+```
+
+- Track user referrals
+- Disabled if set to 0

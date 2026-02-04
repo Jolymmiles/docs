@@ -1,0 +1,130 @@
+---
+title: Troubleshooting
+description: Solutions for common issues with the Private Version of Remnawave Telegram Shop Bot
+---
+
+## Admin Panel Not Loading
+
+- Verify `BOT_ADMIN_URL` is set correctly in `.env`
+- Check reverse proxy configuration
+- Ensure SSL certificate is valid
+- Check bot logs: `docker compose logs -f bot`
+
+---
+
+## Database Connection Failed
+
+- Verify PostgreSQL container is healthy: `docker compose ps`
+- Ensure network connectivity between containers
+- Check `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` variables in `.env`
+
+```bash
+# Check database health
+docker compose exec db pg_isready -U postgres
+```
+
+---
+
+## Permission Denied for Uploads
+
+```bash
+sudo chmod -R 777 /opt/private-remnawave-telegram-shop-bot/uploads
+```
+
+---
+
+## Permission Denied for Logs
+
+```
+error="open access log file: open /logs/access.log: permission denied"
+```
+
+Solution:
+```bash
+sudo chmod 777 /opt/private-remnawave-telegram-shop-bot/logs
+```
+
+---
+
+## Bot Not Connecting to Remnawave
+
+### Same Server (Internal Network)
+- Verify `REMNAWAVE_URL=http://remnawave:3000` points to container name
+- Ensure bot and panel are in the same Docker network (`remnawave-network`)
+- Check if network exists: `docker network ls | grep remnawave`
+
+### Separate Server
+- Verify `REMNAWAVE_URL` points to external HTTPS URL of the panel
+- Ensure panel is accessible externally
+- Check `REMNAWAVE_TOKEN`
+
+---
+
+## Container Keeps Restarting
+
+```bash
+# View logs
+docker compose logs -f bot
+
+# Check status
+docker compose ps
+```
+
+Common causes:
+- Invalid environment variables
+- Database unavailable
+- Invalid Telegram token
+
+---
+
+## Image Load Error
+
+```
+Error response from daemon: No such image
+```
+
+Ensure image is loaded:
+```bash
+docker images | grep rwp_shop
+```
+
+If image is missing, load it:
+```bash
+docker load -i rwp_shop-<VERSION>.tar
+```
+
+---
+
+## Checking Logs
+
+```bash
+# Bot logs
+docker compose logs -f bot
+
+# Database logs
+docker compose logs -f db
+
+# Last 100 lines
+docker compose logs --tail 100 bot
+```
+
+---
+
+## Useful Diagnostic Commands
+
+```bash
+# Container status
+docker compose ps
+
+# Resource usage
+docker stats
+
+# Network inspection
+docker network inspect remnawave-network
+
+# Restart bot
+docker compose restart bot
+
+# Full restart
+docker compose down && docker compose up -d
+```

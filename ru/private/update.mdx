@@ -1,0 +1,139 @@
+---
+title: Обновление
+description: Инструкция по обновлению приватной версии Remnawave Telegram Shop Bot
+---
+
+
+<Warning>
+  **Требуется бекап**
+Перед обновлением обязательно **[сделайте бекап базы данных](/ru/private/backup/)**.
+</Warning>
+
+## Обновление до новой версии
+
+<Steps>
+
+  <Step title="Скачайте новый образ">
+
+  Скачайте новый файл образа из приватного канала.
+  </Step>
+  <Step title="Загрузите новый образ">
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Обновите версию в compose.yaml">
+
+  Измените версию образа:
+  ```yaml
+  image: rwp_shop:<VERSION>
+  ```
+  </Step>
+  <Step title="Перезапустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+---
+
+## Обновление с публичной версии
+
+Если у вас уже установлена публичная версия:
+
+<Steps>
+
+  <Step title="Перейдите в директорию бота">
+  ```bash
+  cd /opt/remnawave-telegram-shop
+  ```
+  <Note>
+  Замените на ваш фактический путь установки бота, если он отличается.
+  </Note>
+  </Step>
+  <Step title="Остановите текущего бота">
+  ```bash
+  docker compose down
+  ```
+  </Step>
+  <Step title="Загрузите новый образ">
+  ```bash
+  docker load -i rwp_shop-<VERSION>.tar
+  ```
+  </Step>
+  <Step title="Создайте директорию uploads">
+  ```bash
+  mkdir -p uploads
+  sudo chmod -R 777 uploads
+  ```
+  </Step>
+  <Step title="Обновите docker-compose.yaml">
+
+  Измените образ и добавьте порты:
+  ```yaml
+  name: rwp_shop
+
+  services:
+    bot:
+      image: rwp_shop:<VERSION>
+      container_name: rwp_shop
+      restart: unless-stopped
+      ports:
+        - "127.0.0.1:12345:8080"
+      depends_on:
+        db:
+          condition: service_healthy
+      volumes:
+        - ./translations:/translations
+        - ./uploads:/uploads
+        - /etc/machine-id:/etc/machine-id:ro
+  ```
+
+  <Note>
+  Volume `/etc/machine-id` необходим для привязки лицензии. Он гарантирует, что лицензия останется действительной при пересоздании контейнера.
+  </Note>
+  </Step>
+  <Step title="Добавьте лицензионный ключ и URL админки в .env">
+  ```bash
+  echo "LICENSE_KEY=your-license-key" >> .env
+  echo "BOT_ADMIN_URL=https://bot.example.com" >> .env
+  ```
+
+  <Warning>
+    **Лицензионный ключ**
+  `LICENSE_KEY` обязателен для работы бота. Вы можете получить его в личном кабинете на сервере лицензий после покупки подписки.
+  </Warning>
+  </Step>
+  <Step title="Настройте реверс-прокси">
+
+  Направьте `bot.example.com` на `127.0.0.1:12345` (см. [Настройка реверс-прокси](/ru/private/installation/#настройка-реверс-прокси))
+  </Step>
+  <Step title="Запустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+---
+
+## Проверка обновления
+
+После обновления проверьте:
+
+```bash
+# Статус контейнеров
+docker compose ps
+
+# Логи бота
+docker compose logs -f bot
+
+# Версия образа
+docker images | grep rwp_shop
+```
+
+<Tip>
+  **Возникли проблемы?**
+Смотрите страницу [Устранение неполадок](/ru/private/troubleshooting/) для решения распространённых проблем.
+</Tip>

@@ -1,0 +1,59 @@
+---
+title: Squad Configuration
+description: Configure squad assignment for users and trials
+---
+
+## What are Squads?
+
+Squads represent groups in Remnawave. You can selectively assign which squads users get access to.
+
+## Internal Squad Configuration
+
+```bash
+SQUAD_UUIDS=773db654-a8b2-413a-a50b-75c3536238fd,bc979bdd-f1fa-4d94-8a51-38a0f518a2a2
+```
+
+- Configure comma-separated squad UUIDs
+- Only matching squads are assigned to users
+- If empty, all available squads are assigned
+
+## External Squad Configuration
+
+```bash
+EXTERNAL_SQUAD_UUID=773db654-a8b2-413a-a50b-75c3536238fd
+```
+
+- Single external squad UUID
+- Included in all user creation/update requests
+- Leave empty to disable
+
+## Trial Squad Configuration
+
+Separate squads can be assigned to trial users:
+
+```bash
+TRIAL_INTERNAL_SQUADS=773db654-a8b2-413a-a50b-75c3536238fd,bc979bdd-f1fa-4d94-8a51-38a0f518a2a2
+TRIAL_EXTERNAL_SQUAD_UUID=773db654-a8b2-413a-a50b-75c3536238fd
+```
+
+### Behavior
+
+- **If set**: Trial users are assigned to trial-specific squads
+- **If not set**: Trial users use regular squad configuration (fallback behavior)
+- **Use case**: Isolate trial traffic to prevent resource exhaustion
+
+## Example Configuration
+
+```bash
+# Regular users get access to multiple squads
+SQUAD_UUIDS=773db654-a8b2-413a-a50b-75c3536238fd,bc979bdd-f1fa-4d94-8a51-38a0f518a2a2
+EXTERNAL_SQUAD_UUID=773db654-a8b2-413a-a50b-75c3536238fd
+
+# Trial users get separate trial squads
+TRIAL_INTERNAL_SQUADS=abc12345-def6-7890-ghij-klmnopqrstuv
+TRIAL_EXTERNAL_SQUAD_UUID=xyz98765-abc4-3210-defg-hijklmnopqrs
+```
+2. **Use external squads** for load distribution
+3. **Document squad purposes** with meaningful naming
+4. **Test squad assignment** with test users first
+5. **Monitor squad usage** in Remnawave panel

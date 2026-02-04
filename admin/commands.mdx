@@ -1,0 +1,41 @@
+---
+title: Admin Commands
+description: Available commands for bot administrators
+---
+
+## Admin Command Reference
+
+### /sync
+
+Synchronize users from Remnawave panel with database.
+
+**What it does:**
+- Fetches all users from Remnawave panel
+- Updates existing users in database
+- Removes users no longer present in Remnawave
+- Ensures database consistency
+
+**Usage:**
+```
+Send /sync command to the bot as admin
+```
+
+**Requires:**
+- User ID in `ADMIN_TELEGRAM_ID`
+- Valid Remnawave API credentials
+- Database connectivity
+
+**When to use:**
+- After bulk user changes in Remnawave
+- To fix database inconsistencies
+- As part of maintenance routine
+- Before/after migrations
+
+**Example scenario:**
+```
+Admin makes changes in Remnawave panel
+→ Administrator runs /sync command
+→ Bot fetches updated user list
+→ Database synchronized
+→ All consistent
+```

@@ -1,0 +1,331 @@
+---
+title: Logs & Debugging
+description: Understanding and analyzing logs for troubleshooting
+---
+
+## Viewing Logs
+
+### Real-time Logs
+
+```bash
+# Follow bot logs (live)
+docker compose logs -f remnawave-telegram-shop-bot
+
+# Follow database logs
+docker compose logs -f postgres
+
+# Both simultaneously
+docker compose logs -f
+```
+
+### Historical Logs
+
+```bash
+# Last 100 lines
+docker compose logs --tail 100 remnawave-telegram-shop-bot
+
+# Specific time range
+docker compose logs \
+  --since 2024-11-10T10:00:00 \
+  --until 2024-11-10T11:00:00 \
+  remnawave-telegram-shop-bot
+
+# All available logs
+docker compose logs remnawave-telegram-shop-bot > /tmp/bot-logs.txt
+```
+
+## Log Levels
+
+### Error Logs
+
+```bash
+# Show only errors
+docker compose logs remnawave-telegram-shop-bot | grep -i error
+
+# With context
+docker compose logs remnawave-telegram-shop-bot | grep -A 5 -B 5 "error"
+```
+
+Common errors:
+- `connection refused` - Service unavailable
+- `permission denied` - Access issue
+- `timeout` - Slow response
+- `invalid token` - Auth failed
+
+### Warning Logs
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i warning
+```
+
+### Info Logs
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i "info\|started"
+```
+
+## Common Log Patterns
+
+### On Startup
+
+```
+[INFO] Starting bot
+[INFO] Connecting to database
+[INFO] Database connection established
+[INFO] Loading configuration
+[INFO] Bot ready for commands
+```
+
+### Payment Processing
+
+```
+[INFO] Payment received from user 123456789
+[INFO] Processing payment via yookassa
+[INFO] Activating subscription for user
+[INFO] Subscription activated successfully
+```
+
+### Errors
+
+```
+[ERROR] Failed to connect to database: connection refused
+[ERROR] Invalid API token
+[ERROR] User not found in Remnawave
+[ERROR] Webhook signature verification failed
+```
+
+## Filtering Logs
+
+### By Component
+
+```bash
+# Database related
+docker compose logs remnawave-telegram-shop-bot | grep -i "database\|db\|postgres"
+
+# Payment related
+docker compose logs remnawave-telegram-shop-bot | grep -i "payment\|yookassa\|crypto\|stars"
+
+# User related
+docker compose logs remnawave-telegram-shop-bot | grep -i "user\|subscription"
+
+# API related
+docker compose logs remnawave-telegram-shop-bot | grep -i "api\|remnawave"
+```
+
+### By Severity
+
+```bash
+# Errors
+docker compose logs remnawave-telegram-shop-bot | grep ERROR
+
+# Warnings
+docker compose logs remnawave-telegram-shop-bot | grep WARNING
+
+# Info
+docker compose logs remnawave-telegram-shop-bot | grep INFO
+```
+
+### By User
+
+```bash
+# Specific user ID
+docker compose logs remnawave-telegram-shop-bot | grep "123456789"
+
+# Recent activity
+docker compose logs remnawave-telegram-shop-bot | grep -i "user" | tail -20
+```
+
+## Debugging Specific Issues
+
+### Database Debugging
+
+```bash
+# Connect directly
+docker compose exec postgres \
+  psql -U remnawave -d remnawave
+
+# Check connections
+SELECT * FROM pg_stat_activity;
+
+# List tables
+\dt
+
+# Check specific table
+SELECT COUNT(*) FROM subscriptions;
+```
+
+### Payment Debugging
+
+```bash
+# View payment logs
+docker compose logs remnawave-telegram-shop-bot | grep -A 10 "payment"
+
+# Check transaction status
+docker compose logs remnawave-telegram-shop-bot | grep "transaction\|order"
+
+# API responses
+docker compose logs remnawave-telegram-shop-bot | grep "response\|status"
+```
+
+### User Action Debugging
+
+```bash
+# User starts bot
+docker compose logs remnawave-telegram-shop-bot | grep "user.*start\|/start"
+
+# User makes payment
+docker compose logs remnawave-telegram-shop-bot | grep "user.*payment"
+
+# User subscribes
+docker compose logs remnawave-telegram-shop-bot | grep "subscription.*created"
+```
+
+## Advanced Debugging
+
+### Increase Log Level
+
+Edit `docker-compose.yaml`:
+```yaml
+environment:
+  LOG_LEVEL: DEBUG
+```
+
+Restart:
+```bash
+docker compose up -d
+```
+
+### Log to File
+
+```bash
+# Continuous logging
+docker compose logs -f remnawave-telegram-shop-bot > /var/log/bot.log 2>&1 &
+
+# Monitor file
+tail -f /var/log/bot.log
+```
+
+### Log Rotation
+
+```bash
+# Create logrotate config
+sudo tee /etc/logrotate.d/remnawave-bot > /dev/null <<EOF
+/var/log/bot.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+}
+EOF
+```
+
+### Save Logs for Analysis
+
+```bash
+# Create log archive
+docker compose logs remnawave-telegram-shop-bot > logs_$(date +%Y%m%d).txt
+gzip logs_*.txt
+
+# Save to external storage
+scp logs_*.txt.gz backup@server:/backups/
+```
+
+## Log Analysis Tools
+
+### Search for Errors
+
+```bash
+docker compose logs remnawave-telegram-shop-bot | \
+  grep -E "ERROR|FATAL|failed" | \
+  wc -l  # Count errors
+```
+
+### Timeline Analysis
+
+```bash
+# Group by hour
+docker compose logs remnawave-telegram-shop-bot | \
+  grep ERROR | \
+  awk '{print $1}' | \
+  sort | uniq -c
+```
+
+### Performance Analysis
+
+```bash
+# Find slow operations
+docker compose logs remnawave-telegram-shop-bot | \
+  grep "duration\|time" | \
+  sort -k3 -nr | head -10
+```
+
+## Related Logs
+
+### Docker System Logs
+
+```bash
+# Docker daemon logs
+docker logs $(docker compose ps -q remnawave-telegram-shop-bot) -f
+
+# Container events
+docker events --filter type=container
+```
+
+### System Logs
+
+```bash
+# Linux system logs
+journalctl -u docker -f
+
+# Check disk space
+df -h
+```
+
+## Log Security
+
+⚠️ **Important**: Logs may contain:
+- User IDs
+- Transaction details
+- API keys (if misconfigured)
+- Sensitive system info
+
+**Best Practices**:
+- ✅ Restrict log access
+- ✅ Rotate logs regularly
+- ✅ Archive old logs
+- ✅ Never share logs publicly with keys
+- ❌ Don't log passwords/tokens
+
+## Troubleshooting with Logs
+
+### Problem: Bot not responding
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -E "ERROR|failed|starting"
+```
+
+### Problem: Payments not working
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep -i "payment\|yookassa"
+```
+
+### Problem: Slow performance
+```bash
+docker compose logs remnawave-telegram-shop-bot | grep "duration\|slow\|timeout"
+```
+
+### Problem: Database issues
+```bash
+docker compose logs postgres | grep -E "ERROR|failed"
+```
+
+## When to Collect Logs
+
+Before opening issue/support:
+1. Reproduce the problem
+2. Collect logs: `docker compose logs > issue.log`
+3. Include last 50-100 lines
+4. Remove any sensitive data
+5. Describe steps taken
+6. Include configuration (no secrets)

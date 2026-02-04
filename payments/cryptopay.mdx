@@ -1,0 +1,72 @@
+---
+title: CryptoPay Setup
+description: Configure CryptoPay for cryptocurrency payments
+---
+
+
+CryptoPay enables cryptocurrency payments (Bitcoin, Ethereum, USDT, and more) directly through Telegram.
+
+## Supported Cryptocurrencies
+
+- Bitcoin (BTC)
+- Ethereum (ETH)
+- TON Coin (TON)
+- USDT (Tether)
+- Plus 10+ other altcoins
+
+## Requirements
+
+- Telegram account
+- CryptoPay merchant account
+- Generated API token
+
+## Setup Instructions
+
+<Steps>
+
+  <Step title="Create CryptoPay Account">
+  - Open [@CryptoBot](https://t.me/CryptoBot) on Telegram
+  - Start the bot
+  - Go to "Merchant" section
+  - Accept terms
+  </Step>
+  <Step title="Generate API Token">
+  - In CryptoPay merchant panel
+  - Navigate to "API Settings"
+  - Create new API token
+  - Copy the token
+  </Step>
+  <Step title="Configure Environment">
+  ```bash
+  CRYPTO_PAY_ENABLED=true
+  CRYPTO_PAY_TOKEN=your_token_here
+  CRYPTO_PAY_URL=https://pay.crypt.bot
+  ```
+  </Step>
+  <Step title="Restart Bot">
+  ```bash
+  docker compose down && docker compose up -d
+  ```
+  </Step>
+  <Step title="Test Payment">
+  - Send `/start` to bot
+  - Select subscription
+  - Choose CryptoPay
+  - Complete test transaction
+  </Step>
+</Steps>
+
+## Configuration Variables
+
+| Variable | Description |
+|----------|-------------|
+| `CRYPTO_PAY_ENABLED` | Enable/disable CryptoPay |
+| `CRYPTO_PAY_TOKEN` | Your API token |
+| `CRYPTO_PAY_URL` | API endpoint |
+
+
+## Support
+
+- **CryptoPay Help**: [@CryptoBot](https://t.me/CryptoBot)
+- **API Documentation**: Available in merchant panel
+- **Community**: Telegram crypto communities

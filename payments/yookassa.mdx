@@ -1,0 +1,95 @@
+---
+title: YooKassa Setup
+description: Configure YooKassa for bank card payments
+---
+
+
+YooKassa (Yandex.Kassa) is a payment processor supporting bank cards and other methods in Russia and CIS region.
+
+## Requirements
+
+- Business registration
+- YooKassa merchant account
+- API credentials
+
+## Setup Instructions
+
+<Steps>
+
+  <Step title="Create YooKassa Account">
+  - Visit [yookassa.ru](https://yookassa.ru)
+  - Register as merchant
+  - Verify business information
+  - Wait for approval
+  </Step>
+  <Step title="Generate API Credentials">
+  - Log in to dashboard
+  - Navigate to API settings
+  - Create API key
+  - Note your Shop ID
+  </Step>
+  <Step title="Configure Environment">
+  ```bash
+  YOOKASA_ENABLED=true
+  YOOKASA_SHOP_ID=123456
+  YOOKASA_SECRET_KEY=your_secret_key
+  YOOKASA_EMAIL=contact@example.com
+  YOOKASA_URL=https://payment.yandex.net
+  ```
+  </Step>
+  <Step title="Restart Bot">
+  ```bash
+  docker compose down && docker compose up -d
+  ```
+  </Step>
+  <Step title="Test Payment">
+  - Send `/start` to bot
+  - Select subscription
+  - Choose YooKassa payment
+  - Use test card: `4111 1111 1111 1111`
+  </Step>
+</Steps>
+
+## Configuration Variables
+
+| Variable | Description |
+|----------|-------------|
+| `YOOKASA_ENABLED` | Enable/disable YooKassa |
+| `YOOKASA_SHOP_ID` | Your shop identifier |
+| `YOOKASA_SECRET_KEY` | API secret key |
+| `YOOKASA_EMAIL` | Account email |
+| `YOOKASA_URL` | API endpoint |
+
+## Test Cards
+
+| Card | Status |
+|------|--------|
+| 4111 1111 1111 1111 | Success |
+| 4000 0000 0000 0002 | Decline |
+
+**Expiry**: Any future date  
+**CVC**: Any 3 digits
+
+## Troubleshooting
+
+### Invalid Shop ID
+- Verify Shop ID is correct in dashboard
+- Check for typos
+- Regenerate if uncertain
+
+### Payment Pending
+- Check transaction in dashboard
+- Verify IP whitelist settings
+- Contact YooKassa support
+
+### API Timeout
+- Check Remnawave connectivity
+- Verify database is responsive
+- Review bot logs for errors
+
+
+## Support
+
+- **YooKassa Help**: [yookassa.ru/help](https://yookassa.ru/help)
+- **API Docs**: [yookassa.ru/developers/api](https://yookassa.ru/developers/api)
+- **Issues**: Report on GitHub or contact YooKassa

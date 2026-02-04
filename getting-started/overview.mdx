@@ -1,0 +1,88 @@
+---
+title: Overview
+description: Introduction to Remnawave Telegram Shop Bot
+---
+
+Remnawave Telegram Shop is an advanced Telegram bot designed for selling and managing VPN subscriptions. It integrates seamlessly with the Remnawave panel and provides a smooth user experience for subscription purchases and management.
+
+## What is Remnawave Telegram Shop?
+
+This is a Go-based Telegram bot that handles:
+- Subscription purchases through multiple payment methods
+- User management and authentication
+- Automated subscription expiration notifications
+- Integration with Remnawave VPN panel
+- Multi-language support (Russian and English)
+
+## Project Structure
+
+```
+remnawave-telegram-shop/
+├── cmd/app/              # Main application entry point
+├── db/migrations/        # Database migrations
+├── internal/             # Core bot logic
+├── translations/         # Language files
+├── utils/               # Utility functions
+├── docker-compose.yaml  # Deployment configuration
+└── Dockerfile          # Container image
+```
+
+## Tech Stack
+
+- **Language**: Go 1.20+
+- **Database**: PostgreSQL
+- **Bot Framework**: [go-telegram/bot](https://github.com/go-telegram/bot)
+- **API Client**: [remnawave-api-go](https://github.com/Jolymmiles/remnawave-api-go)
+- **Deployment**: Docker & Docker Compose
+
+## Version Compatibility
+
+| Remnawave Version | Bot Version |
+|------------------|-------------|
+| 1.6           | 2.3.6 |
+| 2.0.0 - 2.1.9 | 3.2.4 |
+| 2.2.*         | 3.2.5 |
+| 2.3.*         | 3.5.* |
+
+## Key Features at a Glance
+
+🛍️ **Multiple Payment Methods**
+- Bank cards via YooKassa
+- Cryptocurrency via CryptoPay  
+- Telegram Stars
+- Tribute subscriptions
+
+📅 **Flexible Subscriptions**
+- 1, 3, 6, and 12-month plans
+- Independent pricing for each period
+- Trial subscriptions with limitations
+
+🔔 **Smart Notifications**
+- Automatic reminders 3 days before expiration
+- Personalized messages in user's language
+- Convenient renewal buttons
+
+🎯 **Advanced Administration**
+- User filtering and whitelisting
+- Squad assignment control
+- Health checks and monitoring
+- Admin command interface
+
+## Getting Started
+
+Choose your next step:
+
+1. **New Installation**: Follow the [Setup Instructions](/getting-started/setup/)
+2. **Configuration**: Learn about [Environment Variables](/configuration/variables/)
+3. **Payments**: Set up your [Payment Methods](/payments/yookassa/)
+4. **Administration**: Understand [Admin Commands](/admin/commands/)
+
+## Support & Community
+
+- **GitHub**: [github.com/Jolymmiels/remnawave-telegram-shop](https://github.com/Jolymmiels/remnawave-telegram-shop)
+- **Issues**: Report bugs and request features
+- **Releases**: Check [90+ available versions](https://github.com/Jolymmiels/remnawave-telegram-shop/releases)
+
+## License
+
+This project is licensed under the **AGPL-3.0** license.

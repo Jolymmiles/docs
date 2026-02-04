@@ -1,0 +1,99 @@
+---
+title: Subscriptions & Trials
+description: Subscription management and trial system
+---
+
+## Subscription Lifecycle
+
+### Purchase
+1. User sends `/start` command
+2. Views subscription options
+3. Selects plan and payment method
+4. Completes payment
+5. Receives configuration
+
+### Active
+- User connected
+- Can purchase renewal anytime
+- Receives reminder before expiration
+
+### Expiration Notification
+- Sent 3 days before expiration
+- At 16:00 UTC daily
+- In user's preferred language
+- Includes renewal button
+
+### Renewal
+- User clicks renewal button
+- Follows payment flow again
+- No service interruption
+
+## Trial System Configuration
+
+### Enable Trials
+
+```bash
+TRIAL_DAYS=7
+TRIAL_TRAFFIC_LIMIT=10
+TRIAL_REMNAWAVE_TAG=trial_user
+```
+
+### How It Works
+
+1. **New User**: Automatically offered trial
+2. **Trial Period**: 7 days (configurable)
+3. **Traffic Limit**: 10GB (configurable)
+4. **Tracking**: Separate tag in Remnawave
+
+### Trial Squad Configuration (Trial Period)
+
+Trials can use different squads:
+
+```bash
+TRIAL_INTERNAL_SQUADS=abc12345-def6-7890-ghij-klmnopqrstuv
+TRIAL_EXTERNAL_SQUAD_UUID=xyz98765-abc4-3210-defg-hijklmnopqrs
+```
+
+## Traffic Limits
+
+Control bandwidth usage:
+
+```bash
+TRAFFIC_LIMIT=100          # Regular users: 100GB
+TRIAL_TRAFFIC_LIMIT=10     # Trial users: 10GB
+```
+
+- **0** = Unlimited traffic
+- Units in **GB**
+- Monitored per subscription
+- Enforced by panel
+
+## Subscription States
+
+```
+Active → (24h before) → About to Expire → Expired
+  ↓
+  └→ Renewal → Active
+```
+
+Users can:
+- ✅ View subscription status anytime
+- ✅ Renew if needed
+- ✅ Switch payment methods
+
+## Troubleshooting
+
+**User not receiving reminder**
+- Check system time (16:00 UTC)
+- Verify Telegram token is active
+- Check user language preference
+
+**Trial not activating**
+- Verify `TRIAL_DAYS > 0`
+- Check Remnawave connectivity
+- Review logs for errors
+
+**Can't renew subscription**
+- Ensure payment method is enabled
+- Verify user has no balance issues
+- Check Remnawave panel connectivity
