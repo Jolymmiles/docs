@@ -1,0 +1,124 @@
+---
+title: Настройка S3
+description: Настройте S3-совместимое хранилище для загрузок и медиа
+---
+
+По умолчанию загруженные файлы (вложения поддержки, изображения FAQ, файлы партнёров, PWA-ассеты) хранятся локально в `./uploads`. Используйте S3-совместимое хранилище для масштабируемости и надёжности.
+
+## Настройка
+
+<Steps>
+  <Step title="Добавьте настройки S3 в .env">
+  ```bash
+  # S3 Storage
+  S3_ENABLED=true
+  S3_ENDPOINT=http://rustfs:9000
+  S3_ACCESS_KEY=your_access_key
+  S3_SECRET_KEY=your_secret_key
+  S3_PUBLIC_URL=https://s3.example.com
+  ```
+  </Step>
+  <Step title="Выберите провайдера S3">
+  Используйте один из вариантов ниже.
+
+  <Tabs>
+    <Tab title="RustFS (self-hosted)">
+      Добавьте сервис в `compose.yaml`:
+      ```yaml
+      rustfs:
+        image: ghcr.io/rustfs/rustfs:latest
+        container_name: rwp_shop_rustfs
+        restart: unless-stopped
+        command: server /data --console-address ":9001"
+        environment:
+          - RUSTFS_ROOT_USER=your_access_key
+          - RUSTFS_ROOT_PASSWORD=your_secret_key
+        volumes:
+          - rustfs_data:/data
+        ports:
+          - "127.0.0.1:9001:9001"
+        networks:
+          - remnawave-network
+      ```
+
+      Добавьте volume:
+      ```yaml
+      volumes:
+        rwp_shop_db_data:
+        rustfs_data:
+      ```
+
+      Опубликуйте публичный URL (нужен для presigned URLs):
+      <Tabs>
+        <Tab title="Caddy">
+          ```txt
+          s3.example.com {
+              import security_headers
+              reverse_proxy rustfs:9000
+          }
+          ```
+        </Tab>
+        <Tab title="Nginx">
+          ```nginx
+          server {
+              listen 443 ssl http2;
+              server_name s3.example.com;
+
+              location / {
+                  proxy_pass http://127.0.0.1:9000;
+                  proxy_set_header Host $host;
+                  client_max_body_size 100M;
+              }
+          }
+          ```
+        </Tab>
+      </Tabs>
+    </Tab>
+    <Tab title="Cloudflare R2">
+      Создайте бакет и S3 API ключи в панели Cloudflare. R2 использует S3-совместимый endpoint формата `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+
+      Пример переменных окружения:
+      ```bash
+      # Cloudflare R2
+      S3_ENABLED=true
+      S3_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+      S3_ACCESS_KEY=<R2_ACCESS_KEY_ID>
+      S3_SECRET_KEY=<R2_SECRET_ACCESS_KEY>
+      S3_PUBLIC_URL=https://<YOUR_PUBLIC_BUCKET_URL>
+      ```
+
+      `S3_PUBLIC_URL` должен указывать на публичный URL бакета, включённый в R2 (custom domain или управляемый `r2.dev`).
+    </Tab>
+  </Tabs>
+  </Step>
+  <Step title="Перезапустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+<Note>
+  **Переменные окружения**
+| Переменная | Описание |
+|------------|----------|
+| `S3_ENABLED` | Включить S3 хранилище (`true`/`false`) |
+| `S3_ENDPOINT` | Endpoint S3 API |
+| `S3_ACCESS_KEY` | Ключ доступа S3 |
+| `S3_SECRET_KEY` | Секретный ключ S3 |
+| `S3_PUBLIC_URL` | Публичный HTTPS URL для presigned URLs |
+</Note>
+
+<Warning>
+  **S3_PUBLIC_URL обязателен**
+`S3_PUBLIC_URL` должен быть публичным HTTPS URL. Он используется для генерации presigned URLs для прямых скачиваний файлов.
+</Warning>
+
+## Автоматически создаваемые бакеты
+
+При старте бот создаёт нужные бакеты, если их нет:
+
+- `faq`
+- `partner`
+- `support`
+- `pwa`

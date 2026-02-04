@@ -10,7 +10,7 @@ description: Instructions for creating and restoring database backups
 
   <Step title="Go to project directory">
   ```bash
-  cd /opt/private-remnawave-telegram-shop-bot
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Create database backup">
@@ -72,19 +72,19 @@ To automatically create backups on a schedule:
 
   <Step title="Create backups directory">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot/backups
+  mkdir -p /opt/rwp-shop/backups
   ```
   </Step>
   <Step title="Create backup script">
   ```bash
-  nano /opt/private-remnawave-telegram-shop-bot/backup.sh
+  nano /opt/rwp-shop/backup.sh
   ```
 
   ```bash
   #!/bin/bash
 
-  BACKUP_DIR="/opt/private-remnawave-telegram-shop-bot/backups"
-  PROJECT_DIR="/opt/private-remnawave-telegram-shop-bot"
+  BACKUP_DIR="/opt/rwp-shop/backups"
+  PROJECT_DIR="/opt/rwp-shop"
   RETENTION_DAYS=14
 
   cd "$PROJECT_DIR"
@@ -98,7 +98,7 @@ To automatically create backups on a schedule:
   </Step>
   <Step title="Make script executable">
   ```bash
-  chmod +x /opt/private-remnawave-telegram-shop-bot/backup.sh
+  chmod +x /opt/rwp-shop/backup.sh
   ```
   </Step>
   <Step title="Add cron job">
@@ -108,7 +108,7 @@ To automatically create backups on a schedule:
 
   Add line for daily backup at 3:00 AM:
   ```txt
-  0 3 * * * /opt/private-remnawave-telegram-shop-bot/backup.sh
+  0 3 * * * /opt/rwp-shop/backup.sh
   ```
   </Step>
 </Steps>

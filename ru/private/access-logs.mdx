@@ -1,0 +1,107 @@
+---
+title: Настройка access-логов с ротацией
+description: Запись access-логов в файл с автоматической ротацией
+---
+
+Используйте эту настройку, если нужно хранить access-логи на диске и автоматически ротировать их.
+
+## Настройка
+
+<Steps>
+  <Step title="Создайте директорию для логов">
+  ```bash
+  mkdir -p logs
+  sudo chmod 777 logs
+  ```
+  </Step>
+  <Step title="Добавьте volume в compose.yaml">
+  В секции `bot` добавьте:
+  ```yaml
+  volumes:
+    - ./translations:/translations
+    - ./uploads:/uploads
+    - ./logs:/logs
+  ```
+  </Step>
+  <Step title="Укажите путь к логам в .env">
+  ```bash
+  ACCESS_LOG_PATH=/logs/access.log
+  ```
+  </Step>
+  <Step title="Перезапустите бота">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+  <Step title="Установите logrotate">
+  (если не установлен)
+  ```bash
+  # Debian/Ubuntu
+  sudo apt update && sudo apt install -y logrotate
+
+  # CentOS/RHEL/Fedora
+  sudo dnf install -y logrotate
+  ```
+  </Step>
+  <Step title="Создайте конфиг logrotate">
+  ```bash
+  sudo nano /etc/logrotate.d/rwp-shop
+  ```
+
+  ```txt
+  /opt/rwp-shop/logs/access.log {
+      daily
+      rotate 14
+      compress
+      delaycompress
+      missingok
+      notifempty
+      copytruncate
+  }
+  ```
+
+  <Note>
+  Замените путь `/opt/rwp-shop/logs/access.log` на ваш фактический путь установки.
+  </Note>
+  </Step>
+  <Step title="Проверьте конфигурацию">
+  ```bash
+  sudo logrotate -d /etc/logrotate.d/rwp-shop
+  ```
+
+  Флаг `-d` запускает в debug-режиме без реальной ротации.
+  </Step>
+  <Step title="Тестовый запуск ротации">
+  ```bash
+  sudo logrotate -f /etc/logrotate.d/rwp-shop
+  ```
+
+  Флаг `-f` принудительно выполняет ротацию.
+  </Step>
+</Steps>
+
+<Tip>
+`copytruncate` позволяет ротировать логи без перезапуска контейнера — файл обрезается на месте после копирования.
+</Tip>
+
+<Note>
+  **Автоматический запуск**
+Logrotate обычно запускается автоматически через cron или systemd timer (ежедневно). Проверить можно:
+```bash
+# Для systemd
+systemctl status logrotate.timer
+
+# Для cron
+cat /etc/cron.daily/logrotate
+```
+</Note>
+
+| Параметр | Описание |
+|----------|----------|
+| `daily` | Ротация раз в день |
+| `rotate 14` | Хранить 14 архивов |
+| `compress` | Сжимать архивы gzip |
+| `delaycompress` | Сжимать со второго архива |
+| `missingok` | Не ругаться если файла нет |
+| `notifempty` | Не ротировать пустой файл |
+| `copytruncate` | Копировать и обрезать без перезапуска |

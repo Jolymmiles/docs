@@ -35,13 +35,13 @@ Use this method if the bot will run on the **same server** as your Remnawave pan
 
   <Step title="Create project directory">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot
-  cd /opt/private-remnawave-telegram-shop-bot
+  mkdir -p /opt/rwp-shop
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Load Docker image">
 
-  Download the image file from the private channel.
+  Download the image file from [me.remnawavebot.dev/releases](https://me.remnawavebot.dev/releases).
 
   ```bash
   docker load -i rwp_shop-<VERSION>.tar
@@ -222,13 +222,13 @@ Use this method if the bot will run on a **different server** from your Remnawav
 
   <Step title="Create project directory">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot
-  cd /opt/private-remnawave-telegram-shop-bot
+  mkdir -p /opt/rwp-shop
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Load Docker image">
 
-  Download the image file from the private channel.
+  Download the image file from [me.remnawavebot.dev/releases](https://me.remnawavebot.dev/releases).
 
   ```bash
   docker load -i rwp_shop-<VERSION>.tar
@@ -412,7 +412,8 @@ The examples below are for **system-wide installation** of Caddy/Nginx (via syst
         header * {
             Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
             X-Content-Type-Options "nosniff"
-            X-Frame-Options "SAMEORIGIN"
+            -X-Frame-Options
+            Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org"
             X-XSS-Protection "1; mode=block"
             -Server
             Referrer-Policy strict-origin-when-cross-origin
@@ -454,6 +455,8 @@ The examples below are for **system-wide installation** of Caddy/Nginx (via syst
     server {
         listen 80;
         server_name bot.example.com;
+        add_header Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org" always;
+        proxy_hide_header X-Frame-Options;
 
         location ~* \.html$ {
             add_header Cache-Control "no-cache, no-store, must-revalidate" always;
@@ -503,64 +506,6 @@ The examples below are for **system-wide installation** of Caddy/Nginx (via syst
   </Tab>
 </Tabs>
 
-### Windows URL Scheme Redirect (Optional)
-
-For Windows users, custom URL schemes (like `happ://`, `v2ray://`, `clash://`) may not open directly from Telegram. Add a `/redir` endpoint to handle these redirects:
-
-<Tabs>
-  <Tab title="Caddy">
-    Add inside your domain block, **before** `reverse_proxy`:
-    ```txt
-@redir {
-    path /redir
-    expression {http.request.uri.query} != ""
-}
-
-route @redir {
-    uri replace + %2B
-
-    redir {query.url} 302
-}
-```
-    
-    Full example:
-    ```txt
-    bot.example.com {
-        import security_headers
-
-        @redir {
-            path /redir
-            expression {http.request.uri.query} != ""
-        }
-
-        route @redir {
-            uri replace + %2B
-
-            redir {query.url} 302
-        }
-        
-        # ... rest of configuration
-        reverse_proxy 127.0.0.1:9912
-    }
-```
-  </Tab>
-  <Tab title="Nginx">
-    Add inside `server` block:
-    ```nginx
-    location = /redir {
-        if ($arg_url) {
-            return 302 $arg_url;
-        }
-        return 400;
-    }
-```
-  </Tab>
-</Tabs>
-
-<Note>
-This allows the Mini App to redirect Windows users through `https://bot.example.com/redir?url=happ://...` which then performs a 302 redirect to the custom URL scheme.
-</Note>
-
 ---
 
 ## Verify Installation
@@ -571,208 +516,12 @@ docker compose logs -f bot
 
 ---
 
-## Access Logs with Rotation
+Need access logs with rotation? See [Access logs with rotation](/private/access-logs/).
 
-To write access logs to a file with automatic rotation:
+Need direct links? See [Browser login (direct links)](/private/direct-links/).
 
-<Steps>
 
-  <Step title="Create logs directory">
-  ```bash
-  mkdir -p logs
-  sudo chmod 777 logs
-  ```
-  </Step>
-  <Step title="Add volume to compose.yaml">
-
-  In the `bot` service section, add:
-  ```yaml
-  volumes:
-    - ./translations:/translations
-    - ./uploads:/uploads
-    - ./logs:/logs
-  ```
-  </Step>
-  <Step title="Set log path in .env">
-  ```bash
-  ACCESS_LOG_PATH=/logs/access.log
-  ```
-  </Step>
-  <Step title="Restart the bot">
-  ```bash
-  docker compose up -d
-  ```
-  </Step>
-  <Step title="Install logrotate">
-  (if not installed)
-  ```bash
-  # Debian/Ubuntu
-  sudo apt update && sudo apt install -y logrotate
-
-  # CentOS/RHEL/Fedora
-  sudo dnf install -y logrotate
-  ```
-  </Step>
-  <Step title="Create logrotate config">
-  ```bash
-  sudo nano /etc/logrotate.d/rwp-shop
-  ```
-
-  ```txt
-  /opt/private-remnawave-telegram-shop-bot/logs/access.log {
-      daily
-      rotate 14
-      compress
-      delaycompress
-      missingok
-      notifempty
-      copytruncate
-  }
-  ```
-
-  <Note>
-  Replace `/opt/private-remnawave-telegram-shop-bot/logs/access.log` with your actual installation path.
-  </Note>
-  </Step>
-  <Step title="Verify configuration">
-  ```bash
-  sudo logrotate -d /etc/logrotate.d/rwp-shop
-  ```
-
-  The `-d` flag runs in debug mode without actual rotation.
-  </Step>
-  <Step title="Test rotation">
-  ```bash
-  sudo logrotate -f /etc/logrotate.d/rwp-shop
-  ```
-
-  The `-f` flag forces rotation.
-  </Step>
-</Steps>
-
-<Tip>
-`copytruncate` allows rotating logs without restarting the container — the file is truncated in place after copying.
-</Tip>
-
-<Note>
-  **Automatic Execution**
-Logrotate usually runs automatically via cron or systemd timer (daily). You can check:
-```bash
-# For systemd
-systemctl status logrotate.timer
-
-# For cron
-cat /etc/cron.daily/logrotate
-```
-</Note>
-
-| Parameter | Description |
-|-----------|-------------|
-| `daily` | Rotate daily |
-| `rotate 14` | Keep 14 archives |
-| `compress` | Compress archives with gzip |
-| `delaycompress` | Compress starting from second archive |
-| `missingok` | Don't error if file is missing |
-| `notifempty` | Don't rotate empty file |
-| `copytruncate` | Copy and truncate without restart |
-
----
-
-## S3 Storage (Optional)
-
-By default, uploaded files (support attachments, FAQ images, partner files) are stored locally in the `./uploads` directory. You can optionally use S3-compatible storage (MinIO, RustFS, AWS S3, etc.) for better scalability and reliability.
-
-<Steps>
-
-  <Step title="Add S3 environment variables to .env">
-  ```bash
-  # S3 Storage (optional)
-  S3_ENABLED=true
-  S3_ENDPOINT=http://rustfs:9000
-  S3_ACCESS_KEY=your_access_key
-  S3_SECRET_KEY=your_secret_key
-  S3_PUBLIC_URL=https://s3.example.com
-  ```
-  </Step>
-  <Step title="Add S3 service to compose.yaml">
-  (if using RustFS)
-  ```yaml
-  rustfs:
-    image: ghcr.io/rustfs/rustfs:latest
-    container_name: rwp_shop_rustfs
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      - RUSTFS_ROOT_USER=your_access_key
-      - RUSTFS_ROOT_PASSWORD=your_secret_key
-    volumes:
-      - rustfs_data:/data
-    ports:
-      - "127.0.0.1:9001:9001"
-    networks:
-      - remnawave-network
-  ```
-
-  Add volume:
-  ```yaml
-  volumes:
-    rwp_shop_db_data:
-    rustfs_data:
-  ```
-  </Step>
-  <Step title="Configure reverse proxy for S3">
-
-  Add subdomain for S3 public access (required for presigned URLs):
-
-  <Tabs>
-    <Tab title="Caddy">
-      ```
-      s3.example.com {
-          import security_headers
-          reverse_proxy rustfs:9000
-      }
-  ```
-    </Tab>
-    <Tab title="Nginx">
-      ```nginx
-      server {
-          listen 443 ssl http2;
-          server_name s3.example.com;
-
-          location / {
-              proxy_pass http://127.0.0.1:9000;
-              proxy_set_header Host $host;
-              client_max_body_size 100M;
-          }
-      }
-  ```
-    </Tab>
-  </Tabs>
-  </Step>
-  <Step title="Restart the bot">
-  ```bash
-  docker compose up -d
-  ```
-  </Step>
-</Steps>
-
-<Note>
-  **Environment Variables**
-| Variable | Description |
-|----------|-------------|
-| `S3_ENABLED` | Enable S3 storage (`true`/`false`) |
-| `S3_ENDPOINT` | Internal S3 endpoint (for Docker: `http://rustfs:9000`) |
-| `S3_ACCESS_KEY` | S3 access key |
-| `S3_SECRET_KEY` | S3 secret key |
-| `S3_PUBLIC_URL` | Public HTTPS URL for presigned URLs |
-</Note>
-
-<Warning>
-  **S3_PUBLIC_URL Required**
-`S3_PUBLIC_URL` must be set to a publicly accessible HTTPS URL. This is used for generating presigned URLs that allow direct file downloads from S3.
-</Warning>
-
----
+Need S3-compatible storage? See [S3 storage setup](/private/s3/).
 
 ## Port Reference
 
@@ -839,17 +588,3 @@ To add your Mini App as a button that appears when users tap the menu icon or ty
 You can also use `/setmenubutton` to configure the menu button directly without creating a full Mini App entry.
 </Tip>
 
-### Configure Web Login (Direct Links)
-
-To allow users to open your Mini App directly in a browser via `t.me` links (without using Telegram's in-app browser), you need to configure the domain in BotFather:
-
-1. Open [@BotFather](https://t.me/BotFather)
-2. Send the command `/setdomain`
-3. Select your bot from the list
-4. Enter the domain from your admin panel (e.g., `bot.example.com`)
-
-<Note>
-The domain must match the `BOT_ADMIN_URL` value (without the `https://` prefix).
-</Note>
-
-After this configuration, users can access the Mini App via direct browser links.

@@ -1,0 +1,107 @@
+---
+title: Access logs with rotation
+description: Write access logs to a file and rotate them automatically
+---
+
+Use this setup when you want access logs stored on disk with automatic rotation.
+
+## Setup
+
+<Steps>
+  <Step title="Create logs directory">
+  ```bash
+  mkdir -p logs
+  sudo chmod 777 logs
+  ```
+  </Step>
+  <Step title="Add volume to compose.yaml">
+  In the `bot` service section, add:
+  ```yaml
+  volumes:
+    - ./translations:/translations
+    - ./uploads:/uploads
+    - ./logs:/logs
+  ```
+  </Step>
+  <Step title="Set log path in .env">
+  ```bash
+  ACCESS_LOG_PATH=/logs/access.log
+  ```
+  </Step>
+  <Step title="Restart the bot">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+  <Step title="Install logrotate">
+  (if not installed)
+  ```bash
+  # Debian/Ubuntu
+  sudo apt update && sudo apt install -y logrotate
+
+  # CentOS/RHEL/Fedora
+  sudo dnf install -y logrotate
+  ```
+  </Step>
+  <Step title="Create logrotate config">
+  ```bash
+  sudo nano /etc/logrotate.d/rwp-shop
+  ```
+
+  ```txt
+  /opt/rwp-shop/logs/access.log {
+      daily
+      rotate 14
+      compress
+      delaycompress
+      missingok
+      notifempty
+      copytruncate
+  }
+  ```
+
+  <Note>
+  Replace `/opt/rwp-shop/logs/access.log` with your actual installation path.
+  </Note>
+  </Step>
+  <Step title="Verify configuration">
+  ```bash
+  sudo logrotate -d /etc/logrotate.d/rwp-shop
+  ```
+
+  The `-d` flag runs in debug mode without actual rotation.
+  </Step>
+  <Step title="Test rotation">
+  ```bash
+  sudo logrotate -f /etc/logrotate.d/rwp-shop
+  ```
+
+  The `-f` flag forces rotation.
+  </Step>
+</Steps>
+
+<Tip>
+`copytruncate` allows rotating logs without restarting the container — the file is truncated in place after copying.
+</Tip>
+
+<Note>
+  **Automatic execution**
+Logrotate usually runs automatically via cron or systemd timer (daily). You can check:
+```bash
+# For systemd
+systemctl status logrotate.timer
+
+# For cron
+cat /etc/cron.daily/logrotate
+```
+</Note>
+
+| Parameter | Description |
+|-----------|-------------|
+| `daily` | Rotate daily |
+| `rotate 14` | Keep 14 archives |
+| `compress` | Compress archives with gzip |
+| `delaycompress` | Compress starting from second archive |
+| `missingok` | Don't error if file is missing |
+| `notifempty` | Don't rotate empty file |
+| `copytruncate` | Copy and truncate without restart |

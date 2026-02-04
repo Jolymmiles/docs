@@ -10,7 +10,7 @@ description: Инструкция по созданию и восстановл�
 
   <Step title="Перейдите в директорию проекта">
   ```bash
-  cd /opt/private-remnawave-telegram-shop-bot
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Создайте бекап базы данных">
@@ -72,19 +72,19 @@ description: Инструкция по созданию и восстановл�
 
   <Step title="Создайте директорию для бекапов">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot/backups
+  mkdir -p /opt/rwp-shop/backups
   ```
   </Step>
   <Step title="Создайте скрипт бекапа">
   ```bash
-  nano /opt/private-remnawave-telegram-shop-bot/backup.sh
+  nano /opt/rwp-shop/backup.sh
   ```
 
   ```bash
   #!/bin/bash
 
-  BACKUP_DIR="/opt/private-remnawave-telegram-shop-bot/backups"
-  PROJECT_DIR="/opt/private-remnawave-telegram-shop-bot"
+  BACKUP_DIR="/opt/rwp-shop/backups"
+  PROJECT_DIR="/opt/rwp-shop"
   RETENTION_DAYS=14
 
   cd "$PROJECT_DIR"
@@ -98,7 +98,7 @@ description: Инструкция по созданию и восстановл�
   </Step>
   <Step title="Сделайте скрипт исполняемым">
   ```bash
-  chmod +x /opt/private-remnawave-telegram-shop-bot/backup.sh
+  chmod +x /opt/rwp-shop/backup.sh
   ```
   </Step>
   <Step title="Добавьте задачу в cron">
@@ -108,7 +108,7 @@ description: Инструкция по созданию и восстановл�
 
   Добавьте строку для ежедневного бекапа в 3:00:
   ```txt
-  0 3 * * * /opt/private-remnawave-telegram-shop-bot/backup.sh
+  0 3 * * * /opt/rwp-shop/backup.sh
   ```
   </Step>
 </Steps>

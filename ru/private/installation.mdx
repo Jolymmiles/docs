@@ -35,13 +35,13 @@ description: Пошаговая инструкция по установке п�
 
   <Step title="Создайте директорию проекта">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot
-  cd /opt/private-remnawave-telegram-shop-bot
+  mkdir -p /opt/rwp-shop
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Загрузите Docker образ">
 
-  Скачайте файл образа из приватного канала.
+  Скачайте файл образа с [me.remnawavebot.dev/releases](https://me.remnawavebot.dev/releases).
 
   ```bash
   docker load -i rwp_shop-<VERSION>.tar
@@ -222,13 +222,13 @@ description: Пошаговая инструкция по установке п�
 
   <Step title="Создайте директорию проекта">
   ```bash
-  mkdir -p /opt/private-remnawave-telegram-shop-bot
-  cd /opt/private-remnawave-telegram-shop-bot
+  mkdir -p /opt/rwp-shop
+  cd /opt/rwp-shop
   ```
   </Step>
   <Step title="Загрузите Docker образ">
 
-  Скачайте файл образа из приватного канала.
+  Скачайте файл образа с [me.remnawavebot.dev/releases](https://me.remnawavebot.dev/releases).
 
   ```bash
   docker load -i rwp_shop-<VERSION>.tar
@@ -412,7 +412,8 @@ description: Пошаговая инструкция по установке п�
         header * {
             Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
             X-Content-Type-Options "nosniff"
-            X-Frame-Options "SAMEORIGIN"
+            -X-Frame-Options
+            Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org"
             X-XSS-Protection "1; mode=block"
             -Server
             Referrer-Policy strict-origin-when-cross-origin
@@ -454,6 +455,8 @@ description: Пошаговая инструкция по установке п�
     server {
         listen 80;
         server_name bot.example.com;
+        add_header Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org" always;
+        proxy_hide_header X-Frame-Options;
 
         location ~* \.html$ {
             add_header Cache-Control "no-cache, no-store, must-revalidate" always;
@@ -503,64 +506,6 @@ description: Пошаговая инструкция по установке п�
   </Tab>
 </Tabs>
 
-### Редирект URL-схем для Windows (опционально)
-
-Для пользователей Windows кастомные URL-схемы (такие как `happ://`, `v2ray://`, `clash://`) могут не открываться напрямую из Telegram. Добавьте endpoint `/redir` для обработки таких редиректов:
-
-<Tabs>
-  <Tab title="Caddy">
-    Добавьте внутри блока домена **перед** `reverse_proxy`:
-    ```txt
-@redir {
-    path /redir
-    expression {http.request.uri.query} != ""
-}
-
-route @redir {
-    uri replace + %2B
-
-    redir {query.url} 302
-}
-    ```
-    
-    Полный пример:
-    ```txt
-    bot.example.com {
-        import security_headers
-
-        @redir {
-            path /redir
-            expression {http.request.uri.query} != ""
-        }
-
-        route @redir {
-            uri replace + %2B
-
-            redir {query.url} 302
-        }
-        
-        # ... остальная конфигурация
-        reverse_proxy 127.0.0.1:9912
-    }
-    ```
-  </Tab>
-  <Tab title="Nginx">
-    Добавьте внутри блока `server`:
-    ```nginx
-    location = /redir {
-        if ($arg_url) {
-            return 302 $arg_url;
-        }
-        return 400;
-    }
-    ```
-  </Tab>
-</Tabs>
-
-<Note>
-Это позволяет Mini App перенаправлять пользователей Windows через `https://bot.example.com/redir?url=happ://...`, который затем выполняет 302 редирект на кастомную URL-схему.
-</Note>
-
 ---
 
 ## Проверка установки
@@ -571,208 +516,13 @@ docker compose logs -f bot
 
 ---
 
-## Настройка access-логов с ротацией
+Нужны access-логи с ротацией? Смотрите [Настройка access-логов](/ru/private/access-logs/).
 
-Для записи access-логов в файл с автоматической ротацией:
-
-<Steps>
-
-  <Step title="Создайте директорию для логов">
-  ```bash
-  mkdir -p logs
-  sudo chmod 777 logs
-  ```
-  </Step>
-  <Step title="Добавьте volume в compose.yaml">
-
-  В секции `bot` добавьте:
-  ```yaml
-  volumes:
-    - ./translations:/translations
-    - ./uploads:/uploads
-    - ./logs:/logs
-  ```
-  </Step>
-  <Step title="Укажите путь к логам в .env">
-  ```bash
-  ACCESS_LOG_PATH=/logs/access.log
-  ```
-  </Step>
-  <Step title="Перезапустите бота">
-  ```bash
-  docker compose up -d
-  ```
-  </Step>
-  <Step title="Установите logrotate">
-  (если не установлен)
-  ```bash
-  # Debian/Ubuntu
-  sudo apt update && sudo apt install -y logrotate
-
-  # CentOS/RHEL/Fedora
-  sudo dnf install -y logrotate
-  ```
-  </Step>
-  <Step title="Создайте конфиг logrotate">
-  ```bash
-  sudo nano /etc/logrotate.d/rwp-shop
-  ```
-
-  ```txt
-  /opt/private-remnawave-telegram-shop-bot/logs/access.log {
-      daily
-      rotate 14
-      compress
-      delaycompress
-      missingok
-      notifempty
-      copytruncate
-  }
-  ```
-
-  <Note>
-  Замените путь `/opt/private-remnawave-telegram-shop-bot/logs/access.log` на ваш фактический путь установки.
-  </Note>
-  </Step>
-  <Step title="Проверьте конфигурацию">
-  ```bash
-  sudo logrotate -d /etc/logrotate.d/rwp-shop
-  ```
-
-  Флаг `-d` запускает в debug-режиме без реальной ротации.
-  </Step>
-  <Step title="Тестовый запуск ротации">
-  ```bash
-  sudo logrotate -f /etc/logrotate.d/rwp-shop
-  ```
-
-  Флаг `-f` принудительно выполняет ротацию.
-  </Step>
-</Steps>
-
-<Tip>
-`copytruncate` позволяет ротировать логи без перезапуска контейнера — файл обрезается на месте после копирования.
-</Tip>
-
-<Note>
-  **Автоматический запуск**
-Logrotate обычно запускается автоматически через cron или systemd timer (ежедневно). Проверить можно:
-```bash
-# Для systemd
-systemctl status logrotate.timer
-
-# Для cron
-cat /etc/cron.daily/logrotate
-```
-</Note>
-
-| Параметр | Описание |
-|----------|----------|
-| `daily` | Ротация раз в день |
-| `rotate 14` | Хранить 14 архивов |
-| `compress` | Сжимать архивы gzip |
-| `delaycompress` | Сжимать со второго архива |
-| `missingok` | Не ругаться если файла нет |
-| `notifempty` | Не ротировать пустой файл |
-| `copytruncate` | Копировать и обрезать без перезапуска |
+Нужны прямые ссылки? Смотрите [Вход через браузер (direct links)](/ru/private/direct-links/).
 
 ---
 
-## S3 хранилище (опционально)
-
-По умолчанию загруженные файлы (вложения поддержки, изображения FAQ, файлы партнёров) хранятся локально в директории `./uploads`. Опционально можно использовать S3-совместимое хранилище (MinIO, RustFS, AWS S3 и др.) для лучшей масштабируемости и надёжности.
-
-<Steps>
-
-  <Step title="Добавьте переменные S3 в .env">
-  ```bash
-  # S3 хранилище (опционально)
-  S3_ENABLED=true
-  S3_ENDPOINT=http://rustfs:9000
-  S3_ACCESS_KEY=your_access_key
-  S3_SECRET_KEY=your_secret_key
-  S3_PUBLIC_URL=https://s3.example.com
-  ```
-  </Step>
-  <Step title="Добавьте сервис S3 в compose.yaml">
-  (при использовании RustFS)
-  ```yaml
-  rustfs:
-    image: ghcr.io/rustfs/rustfs:latest
-    container_name: rwp_shop_rustfs
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      - RUSTFS_ROOT_USER=your_access_key
-      - RUSTFS_ROOT_PASSWORD=your_secret_key
-    volumes:
-      - rustfs_data:/data
-    ports:
-      - "127.0.0.1:9001:9001"
-    networks:
-      - remnawave-network
-  ```
-
-  Добавьте volume:
-  ```yaml
-  volumes:
-    rwp_shop_db_data:
-    rustfs_data:
-  ```
-  </Step>
-  <Step title="Настройте reverse proxy для S3">
-
-  Добавьте поддомен для публичного доступа к S3 (требуется для presigned URLs):
-
-  <Tabs>
-    <Tab title="Caddy">
-      ```
-      s3.example.com {
-          import security_headers
-          reverse_proxy rustfs:9000
-      }
-      ```
-    </Tab>
-    <Tab title="Nginx">
-      ```nginx
-      server {
-          listen 443 ssl http2;
-          server_name s3.example.com;
-
-          location / {
-              proxy_pass http://127.0.0.1:9000;
-              proxy_set_header Host $host;
-              client_max_body_size 100M;
-          }
-      }
-      ```
-    </Tab>
-  </Tabs>
-  </Step>
-  <Step title="Перезапустите бота">
-  ```bash
-  docker compose up -d
-  ```
-  </Step>
-</Steps>
-
-<Note>
-  **Переменные окружения**
-| Переменная | Описание |
-|------------|----------|
-| `S3_ENABLED` | Включить S3 хранилище (`true`/`false`) |
-| `S3_ENDPOINT` | Внутренний endpoint S3 (для Docker: `http://rustfs:9000`) |
-| `S3_ACCESS_KEY` | Ключ доступа S3 |
-| `S3_SECRET_KEY` | Секретный ключ S3 |
-| `S3_PUBLIC_URL` | Публичный HTTPS URL для presigned URLs |
-</Note>
-
-<Warning>
-  **S3_PUBLIC_URL обязателен**
-`S3_PUBLIC_URL` должен быть установлен на публично доступный HTTPS URL. Используется для генерации presigned URLs, позволяющих прямую загрузку файлов из S3.
-</Warning>
-
----
+Нужно S3 хранилище? Смотрите [Настройка S3](/ru/private/s3/).
 
 ## Справка по портам
 
@@ -838,18 +588,3 @@ cat /etc/cron.daily/logrotate
 <Tip>
 Вы также можете использовать `/setmenubutton` для настройки кнопки меню напрямую без создания полной записи Mini App.
 </Tip>
-
-### Настройка входа через браузер (Direct Links)
-
-Чтобы пользователи могли открывать Mini App напрямую в браузере через ссылки `t.me` (без использования встроенного браузера Telegram), необходимо настроить домен в BotFather:
-
-1. Откройте [@BotFather](https://t.me/BotFather)
-2. Отправьте команду `/setdomain`
-3. Выберите вашего бота из списка
-4. Введите домен из админки бота (например, `bot.example.com`)
-
-<Note>
-Домен должен совпадать со значением `BOT_ADMIN_URL` (без префикса `https://`).
-</Note>
-
-После этой настройки пользователи смогут открывать Mini App через прямые ссылки в браузере.

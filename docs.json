@@ -74,6 +74,9 @@
               "private/installation",
               "private/update",
               "private/backup",
+              "private/access-logs",
+              "private/direct-links",
+              "private/s3",
               "private/troubleshooting"
             ]
           }
@@ -139,6 +142,9 @@
               "ru/private/installation",
               "ru/private/update",
               "ru/private/backup",
+              "ru/private/access-logs",
+              "ru/private/direct-links",
+              "ru/private/s3",
               "ru/private/troubleshooting"
             ]
           }

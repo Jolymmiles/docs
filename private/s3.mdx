@@ -1,0 +1,124 @@
+---
+title: S3 storage setup
+description: Configure S3-compatible storage for uploads and media
+---
+
+By default, uploaded files (support attachments, FAQ images, partner files, PWA assets) are stored locally in `./uploads`. Use S3-compatible storage when you need higher durability or scalable storage.
+
+## Configuration
+
+<Steps>
+  <Step title="Add S3 settings to .env">
+  ```bash
+  # S3 Storage
+  S3_ENABLED=true
+  S3_ENDPOINT=http://rustfs:9000
+  S3_ACCESS_KEY=your_access_key
+  S3_SECRET_KEY=your_secret_key
+  S3_PUBLIC_URL=https://s3.example.com
+  ```
+  </Step>
+  <Step title="Choose your S3 provider">
+  Use one of the options below.
+
+  <Tabs>
+    <Tab title="RustFS (self-hosted)">
+      Add the service to `compose.yaml`:
+      ```yaml
+      rustfs:
+        image: ghcr.io/rustfs/rustfs:latest
+        container_name: rwp_shop_rustfs
+        restart: unless-stopped
+        command: server /data --console-address ":9001"
+        environment:
+          - RUSTFS_ROOT_USER=your_access_key
+          - RUSTFS_ROOT_PASSWORD=your_secret_key
+        volumes:
+          - rustfs_data:/data
+        ports:
+          - "127.0.0.1:9001:9001"
+        networks:
+          - remnawave-network
+      ```
+
+      Add the volume:
+      ```yaml
+      volumes:
+        rwp_shop_db_data:
+        rustfs_data:
+      ```
+
+      Expose a public URL (required for presigned URLs):
+      <Tabs>
+        <Tab title="Caddy">
+          ```txt
+          s3.example.com {
+              import security_headers
+              reverse_proxy rustfs:9000
+          }
+          ```
+        </Tab>
+        <Tab title="Nginx">
+          ```nginx
+          server {
+              listen 443 ssl http2;
+              server_name s3.example.com;
+
+              location / {
+                  proxy_pass http://127.0.0.1:9000;
+                  proxy_set_header Host $host;
+                  client_max_body_size 100M;
+              }
+          }
+          ```
+        </Tab>
+      </Tabs>
+    </Tab>
+    <Tab title="Cloudflare R2">
+      Create a bucket and generate S3 API credentials in the Cloudflare dashboard. R2 uses an S3-compatible endpoint in the format `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+
+      Set your environment variables:
+      ```bash
+      # Cloudflare R2
+      S3_ENABLED=true
+      S3_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+      S3_ACCESS_KEY=<R2_ACCESS_KEY_ID>
+      S3_SECRET_KEY=<R2_SECRET_ACCESS_KEY>
+      S3_PUBLIC_URL=https://<YOUR_PUBLIC_BUCKET_URL>
+      ```
+
+      `S3_PUBLIC_URL` should be the public bucket URL you enabled in R2 (custom domain or the managed `r2.dev` URL).
+    </Tab>
+  </Tabs>
+  </Step>
+  <Step title="Restart the bot">
+  ```bash
+  docker compose up -d
+  ```
+  </Step>
+</Steps>
+
+<Note>
+  **Environment variables**
+| Variable | Description |
+|----------|-------------|
+| `S3_ENABLED` | Enable S3 storage (`true`/`false`) |
+| `S3_ENDPOINT` | S3 API endpoint |
+| `S3_ACCESS_KEY` | S3 access key |
+| `S3_SECRET_KEY` | S3 secret key |
+| `S3_PUBLIC_URL` | Public HTTPS URL for presigned URLs |
+</Note>
+
+<Warning>
+  **S3_PUBLIC_URL Required**
+`S3_PUBLIC_URL` must be a publicly accessible HTTPS URL. It is used for generating presigned URLs for direct file downloads.
+</Warning>
+
+## Buckets created automatically
+
+On startup the bot creates required buckets if they do not exist:
+
+- `faq`
+- `partner`
+- `support`
+- `pwa`
