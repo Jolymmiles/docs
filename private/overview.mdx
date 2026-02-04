@@ -6,6 +6,113 @@ description: Overview of the private version features - Admin UI Panel
 
 The private version includes a full-featured **Admin UI Panel** and **User Dashboard** built as a Telegram Mini App. Below is an overview of all available features.
 
+## Functional overview
+
+The private version exposes all functionality through the Admin UI and the Mini App API. Features are grouped below so you can quickly map them to your workflow.
+
+### Authentication and access
+
+- **Telegram login** — authenticate users and admins via Telegram Mini App login.
+- **Passkeys** — register, list, and remove passkeys for passwordless access.
+- **Roles and permissions (RBAC)** — granular access control for every admin action.
+- **Language detection** — read and store user language preferences for localized UI.
+
+### User dashboard (Mini App)
+
+- **Dashboard summary** — subscription status, usage, balance, and quick actions.
+- **Plans and pricing** — list plans, view details, and pick a period.
+- **Purchase history** — all payments and invoices in one place.
+- **Promo codes** — apply promos and manage pending promo state.
+- **Trials and free plans** — activate trial or free plans when enabled.
+- **Devices** — list devices, delete HWID entries, and view per-subscription devices.
+- **Autopay** — toggle automatic renewal and manage saved payment methods.
+- **Plan changes** — see available upgrade/downgrade options and execute downgrade.
+- **Extra purchases** — buy extra devices or extra traffic packages.
+- **Multi-subscriptions** — create, update, delete, set primary, and view keys.
+
+### Payments and billing
+
+- **Embedded payments** — initiate payments directly inside the Mini App.
+- **Payment systems** — YooKassa (cards, SBP, SberPay, T-Pay, ЮMoney, Mir Pay), CryptoPay, Telegram Stars, Stripe, Heleket, SeverPay, WATA, Platega, Tribute.
+- **Payment status** — check invoice status and payment completion.
+- **Payment methods** — save, activate, and delete user payment methods.
+- **Autopay processing** — admin-triggered processing of recurring payments.
+- **Receipts (Moynalog)** — optional fiscal receipt generation when enabled.
+
+### Subscriptions and plans (admin)
+
+- **Plan management** — create, update, reorder, set default, and delete plans.
+- **Localized plan descriptions** — per-language plan descriptions.
+- **Plan prices** — CRUD prices per plan and duration.
+- **Plan conversion** — bulk convert subscriptions to new plans.
+- **Subscription ops** — grant/revoke, reset traffic, disable autopay, delete.
+
+### User management and moderation
+
+- **User search and profiles** — detailed user cards and activity.
+- **Payments and devices** — per-user payments, devices, and traffic info.
+- **Referrals** — referrers, bonuses, and referral history.
+- **Remnawave data** — view synced Remnawave user data.
+- **Admin controls** — block/unblock, whitelist, bulk actions, admin fields.
+- **Torrent blocker events** — view detected events and webhook actions.
+
+### Support, FAQ, and templates
+
+- **Support tickets** — create, reply, close/reopen, delete, and react.
+- **Attachments** — file uploads with secure download links.
+- **FAQ management** — CRUD, reorder, and upload FAQ images.
+- **Message templates** — templates with preview and category management.
+- **Support auto-replies** — enable, disable, and configure autoresponders.
+
+### Partner and affiliate program
+
+- **User applications** — apply, view status, and manage withdrawals.
+- **Partner dashboard** — clients, commissions, and payout history.
+- **Admin partner tools** — approve/reject, commission rates, client lists.
+- **Withdrawals** — review, update, and upload proof files.
+
+### Broadcasts and campaigns
+
+- **Broadcasts** — list, create, cancel, delete, and preview recipients.
+- **Ad campaigns** — create campaigns and track linked customers.
+
+### Analytics and reporting
+
+- **Core stats** — totals, growth, overview, daily users and revenue.
+- **Advanced analytics** — retention, cohorts, LTV, MRR, forecasts.
+- **Payment analytics** — payment method distribution and performance.
+- **Support stats** — ticket and support activity analytics.
+- **Funnel & leads** — lead scoring, sources, and event analytics.
+
+### Settings, branding, and UI
+
+- **Global settings** — read/update settings and public configuration.
+- **Squads** — view squad configuration from Remnawave.
+- **Branding** — public branding configuration for Mini App.
+- **Subscription page config** — per-user subscription page settings.
+- **Shaders and textures** — upload and manage custom shaders for UI.
+- **PWA assets** — dynamic manifest and icon upload endpoints.
+
+### Notifications and messaging
+
+- **Push notifications** — VAPID key generation and user subscriptions.
+- **Bot notifications** — event-driven updates and reminders.
+
+### Integrations and webhooks
+
+- **Remnawave webhook** — process user events and alerts.
+- **Payment webhooks** — YooKassa, CryptoPay, Tribute, Stripe, Heleket, WATA, SeverPay, Platega.
+- **Torrent blocker webhook** — process torrent detection events.
+- **Sync tools** — manual sync with Remnawave and UUID sync.
+
+### Storage, files, and system
+
+- **File storage** — local and S3-compatible storage for uploads.
+- **File proxy** — secure file access for support and partner assets.
+- **Health checks** — service health endpoint for monitoring.
+- **Server status proxy** — read proxy status via xray-checker integration.
+- **Redirect handler** — safe redirection endpoint for custom schemes.
+
 ## User Dashboard (Mini App)
 
 Personal account for users with the following features:
