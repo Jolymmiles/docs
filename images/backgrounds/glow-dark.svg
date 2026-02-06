@@ -1,0 +1,16 @@
+<svg width="1920" height="1200" viewBox="0 0 1920 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="violetSoft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(480 480) rotate(0) scale(780 520)">
+      <stop stop-color="#9775FA" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#9775FA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cyanSoft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1630 1020) rotate(0) scale(720 520)">
+      <stop stop-color="#22D3EE" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1920" height="1200" fill="transparent"/>
+  <ellipse cx="480" cy="480" rx="780" ry="520" fill="url(#violetSoft)"/>
+  <ellipse cx="1630" cy="1020" rx="720" ry="520" fill="url(#cyanSoft)"/>
+</svg>

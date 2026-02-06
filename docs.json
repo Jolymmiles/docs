@@ -7,6 +7,16 @@
     "light": "#22D6F9",
     "dark": "#012F7F"
   },
+  "background": {
+    "color": {
+      "light": "#161B23",
+      "dark": "#161B23"
+    },
+    "image": {
+      "light": "/images/backgrounds/docs-rw-background-1to1.png",
+      "dark": "/images/backgrounds/docs-rw-background-1to1.png"
+    }
+  },
   "favicon": "/favicon.svg",
   "logo": {
     "light": "/logo/light.svg",
