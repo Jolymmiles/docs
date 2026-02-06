@@ -25,75 +25,6 @@
   "navigation": {
     "languages": [
       {
-        "language": "en",
-        "label": "English",
-        "default": false,
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "getting-started/overview",
-              "getting-started/setup"
-            ]
-          },
-          {
-            "group": "Configuration",
-            "pages": [
-              "configuration/variables",
-              "configuration/squads",
-              "configuration/security"
-            ]
-          },
-          {
-            "group": "Features",
-            "pages": [
-              "features/core",
-              "features/payments",
-              "features/subscriptions"
-            ]
-          },
-          {
-            "group": "Payment systems",
-            "pages": [
-              "payments/yookassa",
-              "payments/cryptopay",
-              "payments/telegram-stars",
-              "payments/tribute"
-            ]
-          },
-          {
-            "group": "Administration",
-            "pages": [
-              "admin/commands",
-              "admin/users",
-              "admin/monitoring",
-              "admin/maintenance"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "troubleshooting/issues",
-              "troubleshooting/logs"
-            ]
-          },
-          {
-            "group": "Private version",
-            "pages": [
-              "private/overview",
-              "private/installation",
-              "private/update",
-              "private/backup",
-              "private/access-logs",
-              "private/direct-links",
-              "private/s3",
-              "private/troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
         "language": "ru",
         "label": "Русский",
         "default": true,
@@ -158,6 +89,75 @@
               "ru/private/direct-links",
               "ru/private/s3",
               "ru/private/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "language": "en",
+        "label": "English",
+        "default": false,
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "index",
+              "getting-started/overview",
+              "getting-started/setup"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/variables",
+              "configuration/squads",
+              "configuration/security"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/core",
+              "features/payments",
+              "features/subscriptions"
+            ]
+          },
+          {
+            "group": "Payment systems",
+            "pages": [
+              "payments/yookassa",
+              "payments/cryptopay",
+              "payments/telegram-stars",
+              "payments/tribute"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "admin/commands",
+              "admin/users",
+              "admin/monitoring",
+              "admin/maintenance"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/issues",
+              "troubleshooting/logs"
+            ]
+          },
+          {
+            "group": "Private version",
+            "pages": [
+              "private/overview",
+              "private/installation",
+              "private/update",
+              "private/backup",
+              "private/access-logs",
+              "private/direct-links",
+              "private/s3",
+              "private/troubleshooting"
             ]
           }
         ]
