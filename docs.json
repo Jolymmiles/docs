@@ -27,6 +27,7 @@
       {
         "language": "en",
         "label": "English",
+        "default": false,
         "groups": [
           {
             "group": "Getting started",
@@ -95,6 +96,7 @@
       {
         "language": "ru",
         "label": "Русский",
+        "default": true,
         "groups": [
           {
             "group": "Начало",
