@@ -1,0 +1,244 @@
+---
+title: FAQ — Plan Changes
+description: Detailed description of plan change logic — upgrade, downgrade, conversion
+---
+
+## Plan change types
+
+When changing a plan, the system automatically determines the operation type based on the daily rates of the current and new plans.
+
+| Type | Description | Payment |
+|------|-------------|---------|
+| `upgrade` | Switch to a more expensive plan — pay the difference for remaining days | Yes (surcharge) |
+| `upgrade_convert` | Switch to a more expensive plan — convert days (fewer days) | No |
+| `downgrade` | Switch to a cheaper plan — convert to more days | No |
+| `alternative` | Same price per day — just switch | No |
+| `subscription_to_traffic` | Convert remaining subscription days to GB of traffic | No |
+| `traffic_to_subscription` | Convert remaining traffic to subscription days | No |
+
+---
+
+## Daily rate calculation
+
+For each plan, a **daily rate** is calculated — this is the basis for all computations. The first non-zero price from available periods (1, 3, 6, or 12 months) is divided by the number of days:
+
+```
+day_rate = first_non_zero_price / (number_of_months × 30)
+```
+
+**Example**: A plan costs 300 ₽ per month → `300 / (1 × 30) = 10 ₽/day`.
+
+---
+
+## Upgrade formula (with payment)
+
+During an upgrade, the user pays the price difference for the remaining days. The number of days **does not change**.
+
+```
+price_diff = new_rate - current_rate
+surcharge = remaining_days × price_diff
+```
+
+<Accordion title="Example calculation">
+Current plan: 300 ₽/month (10 ₽/day), new: 450 ₽/month (15 ₽/day), 20 days remaining.
+
+- `diff = 15 - 10 = 5 ₽/day`
+- `surcharge = 20 × 5 = 100 ₽`
+
+The user pays **100 ₽**, days remain **20**, the plan changes.
+</Accordion>
+
+---
+
+## Conversion without payment formula (`upgrade_convert`)
+
+The user can switch to a more expensive plan without paying — instead, the number of days decreases.
+
+```
+remaining_value = remaining_days × current_rate
+new_days = round(remaining_value / new_rate)
+```
+
+<Accordion title="Example calculation">
+Current plan: 10 ₽/day, new: 15 ₽/day, 30 days remaining.
+
+- `remaining_value = 30 × 10 = 300 ₽`
+- `new_days = round(300 / 15) = 20 days`
+
+The user **pays nothing**, but receives **20 days** instead of 30.
+</Accordion>
+
+---
+
+## Downgrade formula
+
+During a downgrade, the user receives more days on a cheaper plan. The formula is the same as conversion:
+
+```
+remaining_value = remaining_days × current_rate
+new_days = round(remaining_value / new_rate)
+```
+
+<Accordion title="Example calculation">
+Current plan: 15 ₽/day, new: 10 ₽/day, 20 days remaining.
+
+- `remaining_value = 20 × 15 = 300 ₽`
+- `new_days = round(300 / 10) = 30 days`
+
+The user **pays nothing** and receives **30 days** instead of 20.
+</Accordion>
+
+---
+
+## Cross-type conversion
+
+The system supports switching between subscription (days) and traffic (GB), as well as between traffic plans. All cross-type conversions are always **free**.
+
+### GB rate calculation
+
+For traffic plans, a **rate per GB** is calculated:
+
+1. If the plan has an explicit price per GB — it is used directly.
+2. Otherwise — a weighted average price is calculated from extra traffic packages.
+
+### Subscription → Traffic
+
+Remaining subscription days are converted to GB of traffic on the new plan.
+
+```
+remaining_value = remaining_days × day_rate
+new_traffic_GB = round(remaining_value / gb_rate)
+```
+
+<Accordion title="Example calculation">
+Current plan: subscription at 10 ₽/day, new: traffic at 50 ₽/GB, 30 days remaining.
+
+- `remaining_value = 30 × 10 = 300 ₽`
+- `new_traffic = round(300 / 50) = 6 GB`
+
+The user receives **6 GB** of traffic instead of 30 subscription days.
+</Accordion>
+
+### Traffic → Subscription
+
+Remaining traffic (limit minus used) is converted to subscription days.
+
+```
+remaining_value = remaining_traffic_GB × gb_rate
+new_days = round(remaining_value / day_rate)
+```
+
+<Accordion title="Example calculation">
+Current plan: traffic at 50 ₽/GB, 10 GB remaining, new: subscription at 10 ₽/day.
+
+- `remaining_value = 10 × 50 = 500 ₽`
+- `new_days = round(500 / 10) = 50 days`
+
+The user receives **50 days** of subscription instead of 10 GB of traffic.
+</Accordion>
+
+### Traffic → Traffic
+
+Remaining traffic is converted to GB on the new traffic plan.
+
+```
+remaining_value = remaining_traffic_GB × current_gb_rate
+new_traffic_GB = round(remaining_value / new_gb_rate)
+```
+
+<Accordion title="Example calculation">
+Current plan: 50 ₽/GB, 10 GB remaining, new: 25 ₽/GB.
+
+- `remaining_value = 10 × 50 = 500 ₽`
+- `new_traffic = round(500 / 25) = 20 GB`
+
+The user receives **20 GB** on the new plan instead of 10 GB.
+</Accordion>
+
+<Note>
+For higher precision, the system performs intermediate calculations in minutes (for subscriptions) and megabytes (for traffic), rounding only the final result.
+</Note>
+
+---
+
+## Plan flags
+
+Each plan has flags that control change availability:
+
+| Flag | Description |
+|------|-------------|
+| `ChangeFromDisabled` | Prevents **leaving** this plan — the user cannot switch to another plan |
+| `ChangeToDisabled` | Prevents **switching to** this plan — it won't appear as a change option |
+| `ConversionDisabled` | Only paid upgrade is allowed — downgrade and free conversion are disabled |
+
+---
+
+## System settings
+
+| Setting | Description |
+|---------|-------------|
+| `plan_change_penalty_days` | Penalty days deducted during conversion |
+| `plan_change_daily_limit` | Maximum number of plan changes per day per user |
+
+The limit is checked against the plan change history table — if the limit is reached, changes are blocked until the next day.
+
+---
+
+## Promo codes during upgrade
+
+If the user has an active promo code, the discount is applied to the calculated surcharge:
+
+```
+total = surcharge × (100 - discount_percent) / 100
+```
+
+After successful payment, the promo code is marked as used.
+
+---
+
+## Extra devices during upgrade
+
+During an upgrade, extra devices are prorated based on remaining days:
+
+```
+cost_per_device = monthly_device_price × remaining_days / 30
+device_surcharge = ceil(cost_per_device) × number_of_extra_devices
+total = plan_surcharge + device_surcharge
+```
+
+---
+
+## Complete plan change flow
+
+<Steps>
+  <Step title="Select a new plan">
+    The user selects a new plan via the Telegram bot or Mini App. The system calculates change options and displays available variants.
+  </Step>
+  <Step title="Calculation">
+    The system determines the operation type (upgrade / downgrade / convert) and calculates the surcharge amount or new number of days.
+  </Step>
+  <Step title="Payment or conversion">
+    **If upgrade (paid):**
+    - The user selects a payment method.
+    - An invoice is created for the surcharge.
+    - The user pays.
+    - The webhook processes the payment result.
+    - The plan changes in Remnawave, days remain the same.
+
+    **If downgrade / conversion (free):**
+    - The user confirms.
+    - The conversion is executed.
+    - The plan and number of days change in Remnawave.
+  </Step>
+  <Step title="Data update">
+    - The subscription is updated in Remnawave.
+    - On downgrade, extra devices are reset.
+    - The user's current plan and autopay plan are updated.
+  </Step>
+  <Step title="Finalization">
+    - Entry recorded in plan change history.
+    - User notification sent.
+    - Promo code processed (if applicable).
+    - Receipt issued (if Moynalog is enabled).
+  </Step>
+</Steps>
