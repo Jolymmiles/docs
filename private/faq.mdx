@@ -99,7 +99,7 @@ The system supports switching between subscription (days) and traffic (GB), as w
 For traffic plans, a **rate per GB** is calculated:
 
 1. If the plan has an explicit price per GB — it is used directly.
-2. Otherwise — a weighted average price is calculated from extra traffic packages.
+2. Otherwise — all extra traffic packages are summed up, and the average price is calculated: `gb_rate = total_package_price / total_package_GB`.
 
 ### Subscription → Traffic
 
