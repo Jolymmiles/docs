@@ -16,6 +16,8 @@ By default, uploaded files (support attachments, FAQ images, partner files, PWA 
   S3_ACCESS_KEY=your_access_key
   S3_SECRET_KEY=your_secret_key
   S3_PUBLIC_URL=https://s3.example.com
+  S3_REGION=us-east-1          # optional, default: us-east-1
+  S3_BUCKET=files              # optional, parent bucket mode
   ```
   </Step>
   <Step title="Choose your S3 provider">
@@ -85,6 +87,8 @@ By default, uploaded files (support attachments, FAQ images, partner files, PWA 
       S3_ACCESS_KEY=<R2_ACCESS_KEY_ID>
       S3_SECRET_KEY=<R2_SECRET_ACCESS_KEY>
       S3_PUBLIC_URL=https://<YOUR_PUBLIC_BUCKET_URL>
+      S3_REGION=auto              # R2 uses "auto" as region
+      S3_BUCKET=files             # recommended for R2 free tier (bucket limit)
       ```
 
       `S3_PUBLIC_URL` should be the public bucket URL you enabled in R2 (custom domain or the managed `r2.dev` URL).
@@ -107,6 +111,8 @@ By default, uploaded files (support attachments, FAQ images, partner files, PWA 
 | `S3_ACCESS_KEY` | S3 access key |
 | `S3_SECRET_KEY` | S3 secret key |
 | `S3_PUBLIC_URL` | Public HTTPS URL for presigned URLs |
+| `S3_REGION` | S3 region (default: `us-east-1`). Required by AWS and some S3-compatible providers |
+| `S3_BUCKET` | Optional parent bucket name. When set, all logical buckets become key prefixes inside this single bucket |
 </Note>
 
 <Warning>
@@ -122,3 +128,40 @@ On startup the bot creates required buckets if they do not exist:
 - `partner`
 - `support`
 - `pwa`
+- `start`
+- `branding`
+
+## Parent Bucket Mode
+
+By default the bot creates a separate bucket for each category listed above. If your S3 provider limits the number of buckets (e.g. Cloudflare R2 free tier), you can set **`S3_BUCKET`** to consolidate everything into a single bucket.
+
+<Tabs>
+  <Tab title="Without S3_BUCKET (default)">
+    Six independent buckets are created:
+
+    ```txt
+    faq/
+    partner/
+    support/
+    pwa/
+    start/
+    branding/
+    ```
+  </Tab>
+  <Tab title="With S3_BUCKET=files">
+    A single bucket `files` is created. Logical buckets become key prefixes:
+
+    ```txt
+    files/faq/...
+    files/partner/...
+    files/support/...
+    files/pwa/...
+    files/start/...
+    files/branding/...
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+  Use parent bucket mode when your provider charges per bucket or imposes a bucket count limit. One bucket with prefixed keys works identically from the application's perspective.
+</Tip>
