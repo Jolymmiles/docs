@@ -24,7 +24,7 @@ export default defineConfig({
     nav: [
       { text: 'Публичная версия', link: '/ru/', activeMatch: '/ru/(?!private)' },
       { text: 'Приватная версия', link: '/ru/private/releases', activeMatch: '/ru/private/' },
-      { text: 'Личный кабинет', link: 'https://me.remnawavebot.dev/' },
+      { text: 'Telegram', link: 'https://t.me/remnawavetelegramshop' },
     ],
 
     sidebar: {
@@ -116,9 +116,7 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/Jolymmiels/remnawave-telegram-shop' },
-    ],
+    socialLinks: [],
 
     editLink: {
       pattern: 'https://github.com/Jolymmiels/remnawave-telegram-shop/edit/main/:path',
