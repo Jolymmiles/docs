@@ -264,8 +264,19 @@ const features = [
 }
 
 .cta-link:hover {
-  transform: translateY(-2px);
   filter: brightness(1.08);
+}
+
+.tone-outline:hover {
+  background: rgba(60, 201, 219, 0.05);
+}
+
+.tone-soft:hover {
+  background: rgba(21, 170, 191, 0.2);
+}
+
+.tone-telegram:hover {
+  background: #0077b3;
 }
 
 .cta-wide {
