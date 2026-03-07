@@ -1,0 +1,182 @@
+:root {
+  --vp-c-brand-1: #0B89F8;
+  --vp-c-brand-2: #22D6F9;
+  --vp-c-brand-3: #012F7F;
+  --vp-c-brand-soft: rgba(11, 137, 248, 0.14);
+}
+
+.dark {
+  --vp-c-bg: #161B23;
+  --vp-c-bg-alt: #161B23;
+  --vp-c-bg-elv: #1e2430;
+  --vp-c-bg-soft: #1e2430;
+  --vp-c-gutter: transparent;
+  --vp-c-divider: rgba(255, 255, 255, 0.06);
+  --vp-nav-bg-color: rgba(13, 17, 23, 0.62);
+  --vp-nav-screen-bg-color: rgba(13, 17, 23, 0.95);
+  --vp-local-nav-bg-color: rgba(13, 17, 23, 0.62);
+}
+
+/* Navbar - glassmorphism like bugtracker */
+.dark .VPNavBar,
+.dark .VPNavBar .wrapper,
+.dark .VPNavBar .container,
+.dark .VPNavBar .content,
+.dark .VPNavBar .content-body,
+.dark .VPNavBar .curtain {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+/* Default state (at top): light glass */
+.dark .VPNav {
+  background: rgba(22, 27, 35, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s ease !important;
+}
+/* Scrolled state: denser glass + cyan accent border + shadow */
+.dark .VPNav:has(.VPNavBar:not(.top)) {
+  background: rgba(22, 27, 35, 0.9) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(20, 184, 166, 0.1) !important;
+}
+.dark .VPNavBar {
+  --vp-c-divider: transparent !important;
+  --vp-c-gutter: transparent !important;
+  border-bottom: none !important;
+}
+.dark .VPNavBar .content-body {
+  border-bottom: none !important;
+}
+.dark .VPNavBar::after,
+.dark .VPNavBar .wrapper::after {
+  display: none !important;
+}
+.dark .VPLocalNav {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+.dark .VPSidebar {
+  background-color: transparent !important;
+  border-right: none !important;
+  scrollbar-width: none;
+}
+.dark .VPSidebar::-webkit-scrollbar {
+  display: none;
+}
+.dark .VPContent.has-sidebar {
+  border-left: none !important;
+}
+.dark .VPFooter {
+  border-top: none !important;
+}
+.dark .VPDocFooter {
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+/* Grid background - matching bugtracker style */
+.dark body {
+  background-color: #161B23;
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-attachment: fixed;
+}
+
+/* Remove VitePress default background on content area */
+.dark .VPContent {
+  background: transparent;
+}
+
+/* Animated background blobs - from landing */
+.dark body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 25% 40%, rgba(151, 117, 250, 0.08), transparent 50%),
+    radial-gradient(ellipse 50% 50% at 85% 85%, rgba(34, 211, 238, 0.06), transparent 50%);
+}
+
+/* Details/Accordion styling */
+details {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+details summary {
+  padding: 12px 16px;
+  background: var(--vp-c-bg-soft);
+  cursor: pointer;
+  font-weight: 500;
+  user-select: none;
+}
+details summary:hover {
+  background: var(--vp-c-bg-elv);
+}
+details[open] summary {
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+details > :not(summary) {
+  padding: 0 16px;
+}
+
+/* Sidebar icon styling */
+.VPSidebarItem .text i.fa-solid,
+.VPSidebarItem .text i.fa-brands {
+  width: 18px;
+  margin-right: 6px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.VPSidebarItem.is-active .text i.fa-solid,
+.VPSidebarItem.is-active .text i.fa-brands {
+  opacity: 1;
+}
+
+/* Code blocks styling */
+.dark div[class*='language-'] {
+  background: rgba(13, 17, 23, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+/* Home features cards */
+.VPFeatures .icon {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 20px !important;
+  background: rgba(11, 137, 248, 0.1) !important;
+}
+.VPFeatures .icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: var(--vp-c-brand-1);
+}
+.dark .VPFeature {
+  background: rgba(13, 17, 23, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.03) inset !important;
+  transition: transform 0.2s ease, border-color 0.2s ease !important;
+}
+.dark .VPFeature:hover {
+  transform: translateY(-2px);
+  border-color: rgba(11, 137, 248, 0.2) !important;
+}
+
+/* Force dark mode as default */
+html {
+  color-scheme: dark;
+}
