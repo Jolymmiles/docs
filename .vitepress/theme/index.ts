@@ -7,6 +7,8 @@ import HomeContent from './components/HomeContent.vue'
 import LandingHome from './components/LandingHome.vue'
 import NavBarTitle from './components/NavBarTitle.vue'
 import NavBarCta from './components/NavBarCta.vue'
+import Tabs from './components/Tabs.vue'
+import TabPanel from './components/TabPanel.vue'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import './style.css'
 
@@ -23,5 +25,7 @@ export default {
     app.component('StepCarousel', StepCarousel)
     app.component('HomeContent', HomeContent)
     app.component('LandingHome', LandingHome)
+    app.component('Tabs', Tabs)
+    app.component('TabPanel', TabPanel)
   },
 } satisfies Theme
