@@ -19,6 +19,12 @@ export default {
       'doc-before': () => h(PageHeader),
       'nav-bar-title-after': () => h(NavBarTitle),
       'nav-bar-content-after': () => h(NavBarCta),
+      'nav-screen-content-after': () => h('a', {
+        href: 'https://me.remnawavebot.dev/',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        class: 'nav-screen-cta',
+      }, 'Личный кабинет ›'),
     })
   },
   enhanceApp({ app }) {

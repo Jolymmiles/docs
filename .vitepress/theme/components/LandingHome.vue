@@ -135,7 +135,7 @@ const features = [
       <section class="features-section">
         <div class="features-head">
           <span>ВОЗМОЖНОСТИ ПРОДУКТА</span>
-          <h2>Что реально доступно в private версии</h2>
+          <h2>Что в private версии</h2>
         </div>
 
         <div class="features-grid">
