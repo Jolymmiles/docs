@@ -59,7 +59,8 @@ export default defineConfig({
           text: 'Справка',
           items: [
             { text: i('wrench', 'Устранение неполадок'), link: '/ru/private/troubleshooting' },
-            { text: i('circle-question', 'FAQ'), link: '/ru/private/faq' },
+            { text: i('tags', 'Тарифы'), link: '/ru/private/faq' },
+            { text: i('circle-question', 'Вопрос-ответ'), link: '/ru/private/qa' },
           ],
         },
       ],
