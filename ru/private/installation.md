@@ -98,6 +98,7 @@ services:
       - LICENSE_KEY=${LICENSE_KEY:-}
       - REMNAWAVE_HEADERS=${REMNAWAVE_HEADERS:-}
       - JWT_SECRET=${JWT_SECRET}
+      - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL:-}
     networks:
       - remnawave-network
 
@@ -170,6 +171,9 @@ JWT_SECRET=
 
 # Пользовательские заголовки для Remnawave API (опционально)
 # REMNAWAVE_HEADERS=
+
+# Прокси для Telegram Bot API (опционально)
+# TELEGRAM_PROXY_URL=socks5://proxy:1080
 ```
 
 ::: tip Совет
@@ -299,6 +303,7 @@ services:
       - LICENSE_KEY=${LICENSE_KEY:-}
       - REMNAWAVE_HEADERS=${REMNAWAVE_HEADERS:-}
       - JWT_SECRET=${JWT_SECRET}
+      - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL:-}
 
   db:
     image: postgres:17-alpine
@@ -358,6 +363,9 @@ JWT_SECRET=
 
 # Пользовательские заголовки для Remnawave API (опционально)
 # REMNAWAVE_HEADERS=
+
+# Прокси для Telegram Bot API (опционально)
+# TELEGRAM_PROXY_URL=socks5://proxy:1080
 ```
 
 ::: warning Внимание
