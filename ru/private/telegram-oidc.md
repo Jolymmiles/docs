@@ -33,8 +33,8 @@ icon: fingerprint
     image: '/images/private/direct-links/step6.webp'
   },
   {
-    title: 'Настройка в панели бота',
-    description: 'После настройки в BotFather, откройте панель управления ботом и перейдите в раздел <strong>Security</strong>:<br><br><code>https://bot.example.com/#/security</code><br><br>Заполните данные для OIDC авторизации через Telegram.',
-    note: 'Этот шаг обязателен — без настройки секретов в панели бота авторизация работать не будет. Домен должен совпадать со значением <code>BOT_ADMIN_URL</code>.'
+    title: 'Настройка в админке Mini App',
+    description: 'После настройки в BotFather, откройте Telegram Mini App админку и перейдите в раздел <strong>Вход в систему</strong>.<br><br>Заполните данные для OIDC авторизации через Telegram.',
+    note: 'Этот шаг обязателен — без настройки секретов в админке авторизация работать не будет.'
   }
 ]" />

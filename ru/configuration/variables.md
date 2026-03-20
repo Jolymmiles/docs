@@ -12,7 +12,7 @@ icon: sliders
 | `DATABASE_URL` | Строка подключения PostgreSQL | `postgresql://user:pass@postgres:5432/remnawave` |
 | `REMNAWAVE_URL` | URL API панели Remnawave      | `https://panel.example.com` |
 | `REMNAWAVE_TOKEN` | Токен API Remnawave           | `your_token` |
-| `ADMIN_TELEGRAM_ID` | Telegram ID администратора    | `123456789` |
+| `ADMIN_ID` | Идентификаторы админов (через запятую). Форматы: число (`123456789`), `telegram:ID`, UUID | `123456789,telegram:987654321` |
 
 ## Конфигурация ценообразования
 

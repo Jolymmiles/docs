@@ -39,7 +39,7 @@ icon: gear
   REMNAWAVE_URL=https://your-panel.com
   REMNAWAVE_TOKEN=your_api_token
   X_API_KEY=tinyauth login:pass in base64
-  ADMIN_TELEGRAM_ID=your_id
+  ADMIN_ID=your_id
   PRICE_1=5
   PRICE_3=12
   PRICE_6=20
