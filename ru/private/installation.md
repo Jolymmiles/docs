@@ -434,7 +434,7 @@ docker compose up -d
 **Кеширование**
 Конфигурации ниже включают правила кеширования для защиты Mini App от ошибок загрузки после обновлений:
 - HTML-файлы не кешируются (всегда актуальная версия)
-- Статические ресурсы `/assets/` кешируются на год (имеют уникальные хеши)
+- Статические ресурсы `/assets/` (кроме JS) кешируются на год (имеют уникальные хеши)
 :::
 
 
@@ -447,27 +447,22 @@ docker compose up -d
 ::: code-group
 
 ```txt [Caddy]
-(security_headers) {
+bot.example.com {
     header * {
         Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
         X-Content-Type-Options "nosniff"
-        -X-Frame-Options
-        Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org"
         X-XSS-Protection "1; mode=block"
         -Server
+        -X-Frame-Options
+        Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org"
         Referrer-Policy strict-origin-when-cross-origin
         X-Robots-Tag "noindex, nofollow"
     }
-}
 
-bot.example.com {
-    import security_headers
+    encode gzip zstd
 
-    @html path_regexp \.html$|^/$
+    @html path / *.html
     header @html Cache-Control "no-cache, no-store, must-revalidate"
-
-    @assets_js path /assets/*.js
-    header @assets_js Cache-Control "no-cache, no-store, must-revalidate"
 
     @immutable {
         path /assets/*
