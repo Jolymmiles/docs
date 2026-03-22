@@ -43,7 +43,7 @@ const actionRows = [
 ]
 
 const stats = [
-  { icon: IconUsers, value: '73', label: 'Активных лицензий', tone: 'violet' },
+  { icon: IconUsers, value: '78', label: 'Активных лицензий', tone: 'violet' },
   { icon: IconCloud, value: '2', label: 'Сценария установки', tone: 'cyan' },
 ]
 
