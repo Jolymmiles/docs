@@ -55,7 +55,7 @@ sudo chmod -R 777 uploads translations
 
 **Шаг 4: Скачайте файлы переводов**
 
-Скачайте `en.json` и `ru.json` из приватного канала и поместите в папку `translations`:
+Скачайте `en.json` и `ru.json` со [страницы релизов](https://me.remnawavebot.dev/releases) и поместите в папку `translations`:
 
 ```bash
 # Скопируйте скачанные файлы в директорию translations
@@ -260,7 +260,7 @@ sudo chmod -R 777 uploads translations
 
 **Шаг 4: Скачайте файлы переводов**
 
-Скачайте `en.json` и `ru.json` из приватного канала и поместите в папку `translations`:
+Скачайте `en.json` и `ru.json` со [страницы релизов](https://me.remnawavebot.dev/releases) и поместите в папку `translations`:
 
 ```bash
 # Скопируйте скачанные файлы в директорию translations
