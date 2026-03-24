@@ -478,6 +478,18 @@ bot.example.com {
 server {
     listen 80;
     server_name bot.example.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name bot.example.com;
+
+    ssl_certificate /etc/letsencrypt/live/bot.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bot.example.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
     add_header Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org https://*.telegram.org" always;
     proxy_hide_header X-Frame-Options;
 
@@ -531,6 +543,8 @@ sudo systemctl reload caddy
 ```
 
 ```bash [Nginx]
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d bot.example.com
 sudo ln -s /etc/nginx/sites-available/bot.example.com /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
