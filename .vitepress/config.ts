@@ -61,6 +61,7 @@ export default defineConfig({
             { text: i('wrench', 'Устранение неполадок'), link: '/ru/private/troubleshooting' },
             { text: i('tags', 'Тарифы'), link: '/ru/private/faq' },
             { text: i('circle-question', 'Вопрос-ответ'), link: '/ru/private/qa' },
+            { text: i('mobile-screen', 'Устройства'), link: '/ru/private/extra-devices' },
           ],
         },
       ],
@@ -120,7 +121,7 @@ export default defineConfig({
     socialLinks: [],
 
     editLink: {
-      pattern: 'https://github.com/Jolymmiels/remnawave-telegram-shop/edit/main/:path',
+      pattern: 'https://github.com/Jolymmiles/docs/edit/main/:path',
       text: 'Редактировать эту страницу',
     },
 
