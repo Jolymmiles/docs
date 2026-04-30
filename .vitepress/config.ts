@@ -53,6 +53,7 @@ export default defineConfig({
             { text: i('fingerprint', 'Telegram OIDC'), link: '/ru/private/telegram-oidc' },
             { text: i('link', 'Прямые ссылки'), link: '/ru/private/direct-links' },
             { text: i('temperature-half', 'Lead Scoring'), link: '/ru/private/lead-scoring' },
+            { text: i('chart-line', 'Прогнозирование (Prophet)'), link: '/ru/private/forecast' },
           ],
         },
         {
