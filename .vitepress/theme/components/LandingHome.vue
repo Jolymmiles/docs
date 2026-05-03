@@ -185,15 +185,18 @@ const features = [
   position: relative;
   z-index: 1;
   color-scheme: dark;
+  overflow-x: clip;
 }
 
 .landing-container {
-  width: min(1400px, calc(100% - 32px));
-  padding: 4rem 32px;
+  width: 100%;
+  max-width: 1400px;
+  padding: clamp(2rem, 6vw, 4rem) clamp(12px, 4vw, 32px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--landing-gap, 4rem);
+  box-sizing: border-box;
 }
 
 /* Hero */
@@ -325,19 +328,20 @@ const features = [
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 32px;
+  gap: clamp(16px, 4vw, 32px);
 }
 
 .stat-card {
-  border-radius: 32px;
+  border-radius: clamp(18px, 4vw, 32px);
   min-height: 274px;
-  padding: 32px;
+  padding: clamp(20px, 5vw, 32px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   border: 1px solid transparent;
+  min-width: 0;
 }
 
 .stat-violet {
@@ -364,7 +368,7 @@ const features = [
 .stat-value {
   margin: 0;
   font-family: Unbounded, sans-serif;
-  font-size: 56px;
+  font-size: clamp(2.5rem, 9vw, 3.5rem);
   line-height: 1.55;
   font-weight: 700;
   white-space: nowrap;
@@ -378,7 +382,7 @@ const features = [
 }
 
 .stat-cyan .stat-value {
-  font-size: 48px;
+  font-size: clamp(2.125rem, 8vw, 3rem);
   background-image: linear-gradient(135deg, rgb(34, 211, 238) 0%, rgb(6, 182, 212) 100%);
 }
 
@@ -427,12 +431,12 @@ const features = [
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: clamp(12px, 2.5vw, 20px);
 }
 
 .feature-card {
   min-height: 220px;
-  padding: 32px;
+  padding: clamp(20px, 4.5vw, 32px);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.02);
@@ -440,6 +444,7 @@ const features = [
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 .feature-card:hover {
@@ -463,17 +468,19 @@ const features = [
 .feature-card h3 {
   margin: 0;
   font-family: Unbounded, sans-serif;
-  font-size: 24px;
-  line-height: 33.6px;
+  font-size: clamp(1.125rem, 3.5vw, 1.5rem);
+  line-height: 1.4;
   font-weight: 600;
   color: #fff;
+  overflow-wrap: anywhere;
 }
 
 .feature-card p {
   margin: 0;
   color: #8b949e;
-  font-size: 14px;
-  line-height: 22.4px;
+  font-size: clamp(0.85rem, 2.4vw, 0.875rem);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .feature-links {
@@ -557,11 +564,6 @@ const features = [
 }
 
 @media (max-width: 1200px) {
-  .landing-container {
-    width: min(1400px, calc(100% - 24px));
-    padding: 4rem 24px;
-  }
-
   .features-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -569,8 +571,6 @@ const features = [
 
 @media (max-width: 760px) {
   .landing-container {
-    width: calc(100% - 16px);
-    padding: 2.5rem 8px;
     gap: 32px;
   }
 
@@ -590,7 +590,6 @@ const features = [
 
   .stat-card {
     min-height: 160px;
-    border-radius: 18px;
   }
 
   .feature-card {
