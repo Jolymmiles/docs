@@ -77,7 +77,17 @@ docker compose ps
 - Неверный токен Telegram
 
 ---
+## Ошибка при редактировании переводов | Ошибка прав доступа translations
+```
+Error HTTP 500: write translation file: open translations/ru.json: permission denied
+```
+Решение:
+```
+chmod 777 /opt/rwp-shop/translations
+chmod 777 /opt/rwp-shop/translations/*.json
+```
 
+---
 ## Ошибка загрузки образа
 
 ```
