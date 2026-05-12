@@ -132,6 +132,7 @@ export default defineConfig({
 
     outline: {
       label: 'На этой странице',
+      level: [2, 3],
     },
 
     docFooter: {
