@@ -60,6 +60,8 @@ sudo chmod -R 777 uploads translations
 ```bash
 # Скопируйте скачанные файлы в директорию translations
 cp en.json ru.json ./translations/
+# Добавьте файлам права, так как от каталога они не наследуются.
+chmod 777 ./translations/*.json
 ```
 
 **Шаг 5: Создайте конфигурацию Docker Compose**
