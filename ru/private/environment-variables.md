@@ -56,6 +56,7 @@ ADMIN_ID=123456789,telegram:987654321,550e8400-e29b-41d4-a716-446655440000
 | `HEALTH_CHECK_PORT` | HTTP-порт для проверки здоровья | `8080` |
 | `REMNAWAVE_MODE` | Режим подключения: `remote` или `local` | `remote` |
 | `TELEGRAM_PROXY_URL` | Прокси для Telegram Bot API (HTTP, HTTPS, SOCKS5) | — |
+| `MOYNALOG_PROXY_URL` | Прокси для API «Мой налог» (lknpd.nalog.ru) (HTTP, HTTPS, SOCKS5) | — |
 
 ### Прокси для Telegram
 
@@ -74,6 +75,22 @@ TELEGRAM_PROXY_URL=http://proxy.example.com:8080
 
 ::: tip Совет
 Поддерживаются протоколы `http://`, `https://` и `socks5://`. Если переменная не задана, бот подключается к Telegram API напрямую.
+:::
+
+### Прокси для «Мой налог»
+
+Если API ФНS `lknpd.nalog.ru` недоступен напрямую (например, заблокирован на сервере), направьте запросы интеграции «Мой налог» через прокси:
+
+```bash
+# SOCKS5
+MOYNALOG_PROXY_URL=socks5://user:password@proxy.example.com:1080
+
+# HTTP прокси
+MOYNALOG_PROXY_URL=http://proxy.example.com:8080
+```
+
+::: tip Совет
+Поддерживаются протоколы `http://`, `https://` и `socks5://`. Через этот же прокси идёт и healthcheck-проверка «Мой налог», поэтому статус в мониторинге совпадает с реальным сетевым путём. Если переменная не задана — подключение напрямую.
 :::
 
 
