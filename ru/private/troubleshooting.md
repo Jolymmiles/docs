@@ -77,7 +77,17 @@ docker compose ps
 - Неверный токен Telegram
 
 ---
+## Ошибка при редактировании переводов | Ошибка прав доступа translations
+```
+Error HTTP 500: write translation file: open translations/ru.json: permission denied
+```
+Решение:
+```
+chmod 777 /opt/rwp-shop/translations
+chmod 777 /opt/rwp-shop/translations/*.json
+```
 
+---
 ## Ошибка загрузки образа
 
 ```
@@ -93,6 +103,11 @@ docker images | grep rwp_shop
 ```bash
 docker load -i rwp_shop-<VERSION>.tar
 ```
+
+---
+
+## Ошибка BOT_IVALID при использовании кнопок в боте, и диплинков
+Проверьте, что у вас выполнены настройки под использование диплинков, раздел документации "Прямые ссылки"
 
 ---
 
