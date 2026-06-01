@@ -13,6 +13,7 @@ import {
   IconPlugConnected,
   IconShieldCheck,
   IconLink,
+  IconStar,
   IconBrandGithub,
   IconBrandTelegram,
 } from '@tabler/icons-vue'
@@ -43,8 +44,34 @@ const actionRows = [
 ]
 
 const stats = [
-  { icon: IconUsers, value: '78', label: 'Активных лицензий', tone: 'violet' },
-  { icon: IconCloud, value: '2', label: 'Сценария установки', tone: 'cyan' },
+  { icon: IconUsers, value: '75', label: 'Активных клиентов', tone: 'violet' },
+  { icon: IconStar, value: '300+', label: 'Звёзд на GitHub', tone: 'cyan' },
+]
+
+// tone: 'default' | 'crypto' | 'tg'
+const paymentSystems = [
+  { name: 'WATA', img: '/partners/wata.ico', tone: 'default' },
+  { name: 'Paypalych', img: '/partners/paypalych.png', tone: 'default' },
+  { name: 'YooKassa', img: '/partners/yookassa.ico', tone: 'default' },
+  { name: 'T-Банк', img: '/partners/tbank.svg', tone: 'default' },
+  { name: 'Antilopay', img: '/partners/antilopay.png', tone: 'default' },
+  { name: 'CloudPayments', img: '/partners/cloudpayments.svg', tone: 'default' },
+  { name: 'Heleket', img: '/partners/heleket.svg', tone: 'crypto' },
+  { name: 'Platega', img: '/partners/platega.ico', tone: 'default' },
+  { name: 'Stripe', img: '/partners/stripe.ico', tone: 'default' },
+  { name: 'Telegram Stars', img: '/partners/tg_stars.ico', tone: 'tg' },
+  { name: 'CryptoPay', img: '/partners/cryptobot.png', tone: 'crypto' },
+  { name: 'Мой Налог', img: '/partners/nalog.svg', tone: 'default' },
+]
+
+const authMethods = [
+  { name: 'Passkey (MFA)', img: '/auth/passkey.svg', tone: 'auth-violet' },
+  { name: 'Email', img: '/auth/email.svg', tone: 'auth-green' },
+  { name: 'Telegram', img: '/auth/telegram.svg', tone: 'tg' },
+  { name: 'Google', img: '/auth/google.svg', tone: 'default' },
+  { name: 'Apple', img: '/auth/apple.svg', tone: 'default' },
+  { name: 'VK ID', img: '/auth/vk.svg', tone: 'tg' },
+  { name: 'Яндекс', img: '/auth/yandex.svg', tone: 'auth-red' },
 ]
 
 const features = [
@@ -83,7 +110,7 @@ const features = [
           <span class="hero-normal"> Shop</span>
         </h1>
         <p class="hero-description">
-          Полнофункциональная панель для управления всеми аспектами VPN-сервиса: личный кабинет клиента, платежи, подписки, поддержка, партнёрская программа и аналитика. Доступно как в формате сайта в браузере, так и в виде Mini App в Telegram.
+          Самый первый бот на Remnawave. Полнофункциональная панель для управления всеми аспектами VPN-сервиса: личный кабинет клиента, платежи, подписки, поддержка, партнёрская программа и аналитика. Доступно как в формате сайта в браузере, так и в виде Mini App в Telegram.
         </p>
       </section>
 
@@ -129,6 +156,34 @@ const features = [
           <p class="stat-value">{{ stat.value }}</p>
           <p class="stat-label">{{ stat.label }}</p>
         </article>
+      </section>
+
+      <!-- Payment systems -->
+      <section class="payments-section" aria-label="Поддерживаемые платёжные системы">
+        <div class="payments-head">
+          <h2 class="payments-title">Поддерживаемые платёжные системы</h2>
+          <p class="payments-subtitle">12 платёжных систем — карты, СБП, крипта, Telegram Stars</p>
+        </div>
+        <div class="payments-grid">
+          <span v-for="p in paymentSystems" :key="p.name" :class="['payment-pill', `payment-${p.tone}`]">
+            <img :src="p.img" alt="" class="payment-pill-icon" loading="lazy" />
+            {{ p.name }}
+          </span>
+        </div>
+      </section>
+
+      <!-- Sign-in methods -->
+      <section class="payments-section" aria-label="Способы входа для клиентов">
+        <div class="payments-head">
+          <h2 class="payments-title">Способы входа для клиентов</h2>
+          <p class="payments-subtitle">7 методов входа — Passkey, Email, Telegram, OAuth-провайдеры</p>
+        </div>
+        <div class="payments-grid">
+          <span v-for="a in authMethods" :key="a.name" :class="['payment-pill', `payment-${a.tone}`]">
+            <img :src="a.img" alt="" class="payment-pill-icon" loading="lazy" />
+            {{ a.name }}
+          </span>
+        </div>
       </section>
 
       <!-- Features -->
@@ -382,7 +437,6 @@ const features = [
 }
 
 .stat-cyan .stat-value {
-  font-size: clamp(2.125rem, 8vw, 3rem);
   background-image: linear-gradient(135deg, rgb(34, 211, 238) 0%, rgb(6, 182, 212) 100%);
 }
 
@@ -395,6 +449,101 @@ const features = [
 }
 
 /* Features */
+.payments-section {
+  width: 100%;
+}
+
+.payments-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.payments-title {
+  margin: 0 0 10px;
+  font-family: Unbounded, sans-serif;
+  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  border: none;
+  padding: 0;
+  background: linear-gradient(135deg, #fff 20%, #13aaff 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.payments-subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: #8b949e;
+}
+
+.payments-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.payment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.payment-pill:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.payment-crypto {
+  color: rgb(247, 147, 26);
+  background: rgba(247, 147, 26, 0.08);
+  border-color: rgba(247, 147, 26, 0.2);
+}
+
+.payment-tg {
+  color: rgb(19, 170, 255);
+  background: rgba(19, 170, 255, 0.08);
+  border-color: rgba(19, 170, 255, 0.2);
+}
+
+.payment-auth-violet {
+  color: rgb(157, 134, 255);
+  background: rgba(157, 134, 255, 0.08);
+  border-color: rgba(157, 134, 255, 0.2);
+}
+
+.payment-auth-green {
+  color: rgb(52, 211, 154);
+  background: rgba(52, 211, 154, 0.08);
+  border-color: rgba(52, 211, 154, 0.2);
+}
+
+.payment-auth-red {
+  color: rgb(252, 63, 29);
+  background: rgba(252, 63, 29, 0.08);
+  border-color: rgba(252, 63, 29, 0.2);
+}
+
+.payment-pill-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .features-section {
   width: 100%;
 }
