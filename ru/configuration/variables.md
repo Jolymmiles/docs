@@ -83,6 +83,19 @@ TRIBUTE_PAYMENT_URL=https://t.me/tribute/app?startapp=...
 HEALTH_CHECK_PORT=8080
 ```
 
+## Мой налог (ФНС)
+
+Автоматическая выдача чеков самозанятого при оплате через YooKassa. Подробнее — [Мой налог (ФНС)](/ru/features/moynalog).
+
+```bash
+MOYNALOG_ENABLED=false
+MOYNALOG_USERNAME=
+MOYNALOG_PASSWORD=
+MOYNALOG_URL=https://lknpd.nalog.ru/api/v1
+# Прокси для API (опционально): http://, https://, socks5://
+MOYNALOG_PROXY_URL=
+```
+
 ## Интерфейс и ссылки
 
 ```bash

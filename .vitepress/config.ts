@@ -89,6 +89,7 @@ export default defineConfig({
             { text: i('puzzle-piece', 'Основные'), link: '/ru/features/core' },
             { text: i('wallet', 'Платежи'), link: '/ru/features/payments' },
             { text: i('calendar-check', 'Подписки'), link: '/ru/features/subscriptions' },
+            { text: i('receipt', 'Мой налог (ФНС)'), link: '/ru/features/moynalog' },
           ],
         },
         {
