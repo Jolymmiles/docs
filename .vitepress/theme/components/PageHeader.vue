@@ -5,6 +5,7 @@ import { computed } from 'vue'
 const { frontmatter, page, theme } = useData()
 
 const title = computed(() => frontmatter.value.title)
+const titleImage = computed(() => frontmatter.value.titleImage)
 const description = computed(() => frontmatter.value.description)
 
 const sectionName = computed(() => {
@@ -30,7 +31,10 @@ const sectionName = computed(() => {
 <template>
   <div class="page-header" v-if="title">
     <span class="page-section" v-if="sectionName">{{ sectionName }}</span>
-    <h1 class="page-title">{{ title }}</h1>
+    <h1 class="page-title">
+      <img v-if="titleImage" :src="titleImage" :alt="title" class="page-title-image" />
+      {{ title }}
+    </h1>
     <p class="page-description" v-if="description">{{ description }}</p>
   </div>
 </template>
@@ -50,11 +54,20 @@ const sectionName = computed(() => {
 }
 
 .page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 32px;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   letter-spacing: -0.02em;
+}
+
+.page-title-image {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .page-description {
