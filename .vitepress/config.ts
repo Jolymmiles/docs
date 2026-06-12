@@ -97,6 +97,7 @@ export default defineConfig({
           text: 'Платежные системы',
           items: [
             { text: i('credit-card', 'YooKassa'), link: '/ru/payments/yookassa' },
+            { text: i('money-bill-transfer', 'Platega'), link: '/ru/payments/platega' },
             { text: i('bitcoin-sign', 'CryptoPay'), link: '/ru/payments/cryptopay' },
             { text: i('star', 'Telegram Stars'), link: '/ru/payments/telegram-stars' },
             { text: i('repeat', 'Tribute'), link: '/ru/payments/tribute' },

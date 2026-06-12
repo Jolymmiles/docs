@@ -46,13 +46,29 @@ icon: gear
   PRICE_12=35
   ```
 
-  **Шаг 4: Запустите бота**
+  **Шаг 4 (опционально): Настройте платежные системы**
+
+Бот поддерживает несколько платежных систем — включите нужные в `.env`:
+
+| Система | Переменная включения | Документация |
+|---------|---------------------|--------------|
+| YooKassa (карты) | `YOOKASA_ENABLED=true` | [Настройка YooKassa](/ru/payments/yookassa/) |
+| Platega (СБП, карты, крипто) | `PLATEGA_ENABLED=true` | [Настройка Platega](/ru/payments/platega/) |
+| Telegram Stars | `TELEGRAM_STARS_ENABLED=true` | [Telegram Stars](/ru/payments/telegram-stars/) |
+| CryptoPay | `CRYPTO_PAY_ENABLED=true` | [CryptoPay](/ru/payments/cryptopay/) |
+| Tribute | `TRIBUTE_WEBHOOK_URL=...` | [Tribute](/ru/payments/tribute/) |
+
+::: tip Вебхуки
+YooKassa, Platega и Tribute подтверждают оплату через вебхуки — боту нужен публичный HTTPS-домен, а путь вебхука должен содержать случайный секрет (`openssl rand -hex 32`). Подробности в документации каждой системы.
+:::
+
+  **Шаг 5: Запустите бота**
 
 ```bash
   docker compose up -d
   ```
 
-  **Шаг 5: Проверьте установку**
+  **Шаг 6: Проверьте установку**
 
 ```bash
   docker compose logs -f remnawave-telegram-shop-bot
@@ -60,7 +76,7 @@ icon: gear
 
   Бот готов, когда вы видите сообщение "Starting bot".
 
-  **Шаг 6: Протестируйте бота**
+  **Шаг 7: Протестируйте бота**
 
 Отправьте команду `/start` вашему боту в Telegram
 
