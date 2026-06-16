@@ -52,6 +52,7 @@ export default defineConfig({
           text: 'Настройка',
           items: [
             { text: i('fingerprint', 'Telegram OIDC'), link: '/ru/private/telegram-oidc' },
+            { text: i('server', 'Локальный Bot API'), link: '/ru/private/telegram-local-api' },
             { text: i('link', 'Прямые ссылки'), link: '/ru/private/direct-links' },
             { text: i('temperature-half', 'Lead Scoring'), link: '/ru/private/lead-scoring' },
             { text: i('chart-line', 'Прогнозирование (Prophet)'), link: '/ru/private/forecast' },

@@ -56,6 +56,7 @@ ADMIN_ID=123456789,telegram:987654321,550e8400-e29b-41d4-a716-446655440000
 | `HEALTH_CHECK_PORT` | HTTP-порт для проверки здоровья | `8080` |
 | `REMNAWAVE_MODE` | Режим подключения: `remote` или `local` | `remote` |
 | `TELEGRAM_PROXY_URL` | Прокси для Telegram Bot API (HTTP, HTTPS, SOCKS5) | — |
+| `TELEGRAM_API_URL` | Адрес собственного сервера [telegram-bot-api](/ru/private/telegram-local-api). Пусто — `https://api.telegram.org` | — |
 | `MOYNALOG_PROXY_URL` | Прокси для API «Мой налог» (lknpd.nalog.ru) (HTTP, HTTPS, SOCKS5) | — |
 
 ### Прокси для Telegram
@@ -189,6 +190,7 @@ HEALTH_CHECK_PORT=8080
 REMNAWAVE_MODE=remote
 # REMNAWAVE_HEADERS=
 # TELEGRAM_PROXY_URL=socks5://proxy:1080
+# TELEGRAM_API_URL=http://telegram-bot-api:8081
 
 # === Логирование ===
 LOG_LEVEL=info
