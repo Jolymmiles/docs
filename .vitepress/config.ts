@@ -44,6 +44,7 @@ export default defineConfig({
             { text: i('arrow-up-right-dots', 'Обновление'), link: '/ru/private/update' },
             { text: i('hard-drive', 'Резервное копирование'), link: '/ru/private/backup' },
             { text: i('scroll', 'Логи доступа'), link: '/ru/private/access-logs' },
+            { text: i('heart-pulse', 'Проверка здоровья'), link: '/ru/private/health' },
             { text: i('cloud-arrow-up', 'S3 хранилище'), link: '/ru/private/s3' },
             { text: i('microchip', 'Ядро XanMod'), link: '/ru/private/xanmod' },
           ],
