@@ -56,6 +56,7 @@ export default defineConfig({
             { text: i('server', 'Локальный Bot API'), link: '/ru/private/telegram-local-api' },
             { text: i('link', 'Прямые ссылки'), link: '/ru/private/direct-links' },
             { text: i('temperature-half', 'Lead Scoring'), link: '/ru/private/lead-scoring' },
+            { text: i('robot', 'Факторы автоматизаций'), link: '/ru/private/automation-factors' },
             { text: i('chart-line', 'Прогнозирование (Prophet)'), link: '/ru/private/forecast' },
           ],
         },
