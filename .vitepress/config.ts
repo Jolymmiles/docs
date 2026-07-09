@@ -57,7 +57,7 @@ export default defineConfig({
             { text: i('link', 'Прямые ссылки'), link: '/ru/private/direct-links' },
             { text: i('temperature-half', 'Lead Scoring'), link: '/ru/private/lead-scoring' },
             { text: i('robot', 'Факторы автоматизаций'), link: '/ru/private/automation-factors' },
-            { text: i('sparkles', 'ИИ-поддержка'), link: '/ru/private/ai-support' },
+            { text: i('wand-magic-sparkles', 'ИИ-поддержка'), link: '/ru/private/ai-support' },
             { text: i('chart-line', 'Прогнозирование (Prophet)'), link: '/ru/private/forecast' },
           ],
         },

@@ -16,6 +16,11 @@ import {
   IconStar,
   IconBrandGithub,
   IconBrandTelegram,
+  IconSparkles,
+  IconRobot,
+  IconChartHistogram,
+  IconDeviceGamepad2,
+  IconClockBolt,
 } from '@tabler/icons-vue'
 
 import { onMounted, onUnmounted } from 'vue'
@@ -48,42 +53,51 @@ const stats = [
   { icon: IconStar, value: '300+', label: 'Звёзд на GitHub', tone: 'cyan' },
 ]
 
-// tone: 'default' | 'crypto' | 'tg'
+// accent = brand color as "R, G, B" channels, consumed via --accent
 const paymentSystems = [
-  { name: 'WATA', img: '/partners/wata.ico', tone: 'default' },
-  { name: 'Paypalych', img: '/partners/paypalych.png', tone: 'default' },
-  { name: 'YooKassa', img: '/partners/yookassa.ico', tone: 'default' },
-  { name: 'T-Банк', img: '/partners/tbank.svg', tone: 'default' },
-  { name: 'Antilopay', img: '/partners/antilopay.png', tone: 'default' },
-  { name: 'CloudPayments', img: '/partners/cloudpayments.svg', tone: 'default' },
-  { name: 'Heleket', img: '/partners/heleket.svg', tone: 'crypto' },
-  { name: 'Platega', img: '/partners/platega.ico', tone: 'default' },
-  { name: 'Stripe', img: '/partners/stripe.ico', tone: 'default' },
-  { name: 'Telegram Stars', img: '/partners/tg_stars.ico', tone: 'tg' },
-  { name: 'CryptoPay', img: '/partners/cryptobot.png', tone: 'crypto' },
-  { name: 'Мой Налог', img: '/partners/nalog.svg', tone: 'default' },
+  { name: 'WATA', img: '/partners/wata.ico', accent: '245, 158, 11' },
+  { name: 'Paypalych', img: '/partners/paypalych.png', accent: '34, 197, 94' },
+  { name: 'YooKassa', img: '/partners/yookassa.ico', accent: '139, 92, 246' },
+  { name: 'T-Банк', img: '/partners/tbank.svg', accent: '250, 204, 21' },
+  { name: 'Antilopay', img: '/partners/antilopay.png', accent: '59, 130, 246' },
+  { name: 'CloudPayments', img: '/partners/cloudpayments.svg', accent: '14, 165, 233' },
+  { name: 'Heleket', img: '/partners/heleket.svg', accent: '247, 147, 26' },
+  { name: 'Platega', img: '/partners/platega.ico', accent: '168, 85, 247' },
+  { name: 'Stripe', img: '/partners/stripe.ico', accent: '99, 91, 255' },
+  { name: 'Telegram Stars', img: '/partners/tg_stars.ico', accent: '19, 170, 255' },
+  { name: 'CryptoPay', img: '/partners/cryptobot.png', accent: '20, 184, 166' },
+  { name: 'PayKilla', img: '/partners/paykilla.svg', accent: '76, 130, 247' },
+  { name: 'CardLink', img: '/partners/cardlink.svg', accent: '123, 110, 240' },
+  { name: 'Robokassa', img: '/partners/robokassa.svg', accent: '33, 163, 102' },
+  { name: 'Lava', img: '/partners/lava.svg', accent: '255, 82, 48' },
+  { name: 'Мой Налог', img: '/partners/nalog.svg', accent: '96, 165, 250' },
 ]
 
 const authMethods = [
-  { name: 'Passkey (MFA)', img: '/auth/passkey.svg', tone: 'auth-violet' },
-  { name: 'Email', img: '/auth/email.svg', tone: 'auth-green' },
-  { name: 'Telegram', img: '/auth/telegram.svg', tone: 'tg' },
-  { name: 'Google', img: '/auth/google.svg', tone: 'default' },
-  { name: 'Apple', img: '/auth/apple.svg', tone: 'default' },
-  { name: 'VK ID', img: '/auth/vk.svg', tone: 'tg' },
-  { name: 'Яндекс', img: '/auth/yandex.svg', tone: 'auth-red' },
+  { name: 'Passkey (MFA)', img: '/auth/passkey.svg', accent: '157, 134, 255' },
+  { name: 'Email', img: '/auth/email.svg', accent: '52, 211, 154' },
+  { name: 'Telegram', img: '/auth/telegram.svg', accent: '19, 170, 255' },
+  { name: 'Google', img: '/auth/google.svg', accent: '66, 133, 244' },
+  { name: 'Apple', img: '/auth/apple.svg', accent: '203, 213, 225' },
+  { name: 'VK ID', img: '/auth/vk.svg', accent: '51, 117, 255' },
+  { name: 'Яндекс', img: '/auth/yandex.svg', accent: '252, 63, 29' },
 ]
 
 const features = [
-  { title: 'Администрирование', text: 'Раздельные Admin UI и личный кабинет с RBAC-ролями, правами доступа и управлением пользователями.', icon: IconUserCog },
-  { title: 'Платежи и биллинг', text: 'Интеграция с YooKassa, WATA, Platega, SeverPay, Stripe, Heleket, CryptoBot, Telegram Stars. Поддержка рекуррентных платежей, автоматическая отправка чеков в "Мой налог". Полная история и статистика оплат.', icon: IconCoin },
-  { title: 'Подписки, трафик и устройства', text: 'Продажа подписок, докупка трафика и устройств, продления, смена тарифа и ограничения по лимитам.', icon: IconCloud },
-  { title: 'Промокоды и блокировки тарифов', text: 'Промокоды: скидка/бесплатные дни. Поддержка скрытых тарифов, доступных через активацию промокода.', icon: IconAd2 },
-  { title: 'Рассылки и рекламные кампании', text: 'Мощная система рассылки по группам пользователей (горячие/теплые/холодные лиды, с/без подписки), поддержка медиа-файлов и форматирования.', icon: IconRocket },
-  { title: 'Поддержка', text: 'Поддержка осуществляется через систему тикетов. Пользователь может создать тикет через бота, браузер и PWA. Настраиваемый FAQ (ЧаВо) для клиентов, шаблоны сообщений в тикетах, настройка автоматических ответах по триггерам и временным правилам.', icon: IconMessages },
+  { title: 'Администрирование', text: 'Раздельные Admin UI и личный кабинет с RBAC-ролями, права доступа, массовые операции над пользователями, теги и комментарии.', icon: IconUserCog },
+  { title: 'Платежи и биллинг', text: 'Интеграция с 15+ платёжными системами: YooKassa, T‑Банк, CloudPayments, Antilopay, Platega, Pally, Stripe, WATA, Heleket, CryptoPay, Telegram Stars. Рекуррентные платежи, чеки 54‑ФЗ и «Мой налог», Apple/Google IAP, полная история и статистика оплат.', icon: IconCoin },
+  { title: 'Подписки, трафик и устройства', text: 'Продажа подписок, докупка трафика и устройств, продления, смена тарифа и лимиты; мульти-подписки, связанные тарифы, платные триалы, автоплатёж, подарки и покупка для другого.', icon: IconCloud },
+  { title: 'Промокоды и блокировки тарифов', text: 'Промокоды на скидку или бесплатные дни (папки, режим «подарок тарифа»), скрытые тарифы, доступные только по промокоду.', icon: IconAd2 },
+  { title: 'Рассылки и рекламные кампании', text: 'Рассылки по сегментам (горячие/тёплые/холодные лиды, с подпиской и без), каналы Telegram и Email, медиа и форматирование, рекламные кампании с атрибуцией кликов.', icon: IconRocket },
+  { title: 'Автоматизации и напоминания', text: 'Движок автонапоминаний и триггеров: гибкое расписание (интервалы, циклы, недельные слоты), часовые пояса, события — истёк триал, нет подписки, температура лида — и кастомные кнопки.', icon: IconClockBolt },
+  { title: 'Поддержка', text: 'Тикеты через бота, браузер и PWA: очереди с авто-назначением и эскалацией, вложения, реакции, лимит активных тикетов, FAQ с разделами, шаблоны сообщений, автоответы по правилам и CSAT-опросы.', icon: IconMessages },
+  { title: 'ИИ-поддержка', text: 'LLM-ассистент отвечает клиентам в тикетах как fallback за автоответами, база знаний с семантическим RAG-поиском и цитатами, генерация статей из закрытых тикетов, черновики админу. Любой OpenAI-совместимый провайдер (OpenRouter, OpenAI, Ollama…).', icon: IconSparkles },
+  { title: 'Аналитика, LTV и прогнозы', text: 'Retention, когорты, LTV, MRR, платёжная аналитика, воронка и lead scoring, статистика поддержки; прогнозирование метрик на Prophet.', icon: IconChartHistogram },
+  { title: 'Игры и геймификация', text: 'Ежедневные игры (колесо фортуны, Wordle, блэкджек, мины, Hi-Lo, морской бой), спины за покупки, казино-баланс с выплатами и фоны-призы.', icon: IconDeviceGamepad2 },
   { title: 'Брендинг, логотип и shader-эффекты', text: 'Полная кастомизация: цвета, логотип, PWA-иконки, фоновые GLSL/WebGL-эффекты для фирменной стилистики.', icon: IconPalette },
   { title: 'Реферальная программа', text: 'Учёт приглашений, начислений и активности рефералов с прозрачной аналитикой по привлечению.', icon: IconAffiliate },
-  { title: 'Партнёрская программа', text: 'Отдельный партнёрский контур: заявки, комиссии, выплаты и партнёрский кабинет.', icon: IconUsersGroup },
+  { title: 'Партнёрская программа', text: 'Партнёрский контур: заявки с авто-одобрением, двухуровневые комиссии, настраиваемые методы вывода с подтверждениями выплат и кабинет партнёра.', icon: IconUsersGroup },
+  { title: 'White-label и партнёрские боты', text: 'Партнёрские Telegram-боты со своим брендингом, медиа, стартовым сообщением, шейдерами и тарифами; bot-scoped identity, партнёрские промокоды, кабинет партнёра-админа с изоляцией на Postgres RLS.', icon: IconRobot },
   {
     title: 'Xray checker через REST API',
     text: 'Интеграция с xray-checker для мониторинга прокси и серверов через REST API.',
@@ -96,7 +110,7 @@ const features = [
     icon: IconShieldCheck,
     links: [{ label: 'xray-torrent-blocker', href: 'https://github.com/kutovoys/xray-torrent-blocker' }],
   },
-  { title: 'Webhooks, Direct links, Storage', text: 'Direct links/startapp/hash-навигация, webhooks (включая Remnawave) и файловое хранилище S3/local.', icon: IconLink },
+  { title: 'Webhooks, Direct links, Storage', text: 'Direct links/startapp/hash-навигация, надёжная доставка вебхуков (включая Remnawave) через inbox-очередь и файловое хранилище S3/local.', icon: IconLink },
 ]
 </script>
 
@@ -162,10 +176,10 @@ const features = [
       <section class="payments-section" aria-label="Поддерживаемые платёжные системы">
         <div class="payments-head">
           <h2 class="payments-title">Поддерживаемые платёжные системы</h2>
-          <p class="payments-subtitle">12 платёжных систем — карты, СБП, крипта, Telegram Stars</p>
+          <p class="payments-subtitle">15 платёжных систем — карты, СБП, крипта, Telegram Stars</p>
         </div>
         <div class="payments-grid">
-          <span v-for="p in paymentSystems" :key="p.name" :class="['payment-pill', `payment-${p.tone}`]">
+          <span v-for="p in paymentSystems" :key="p.name" class="payment-pill payment-brand" :style="{ '--accent': p.accent }">
             <img :src="p.img" alt="" class="payment-pill-icon" loading="lazy" />
             {{ p.name }}
           </span>
@@ -179,7 +193,7 @@ const features = [
           <p class="payments-subtitle">7 методов входа — Passkey, Email, Telegram, OAuth-провайдеры</p>
         </div>
         <div class="payments-grid">
-          <span v-for="a in authMethods" :key="a.name" :class="['payment-pill', `payment-${a.tone}`]">
+          <span v-for="a in authMethods" :key="a.name" class="payment-pill payment-brand" :style="{ '--accent': a.accent }">
             <img :src="a.img" alt="" class="payment-pill-icon" loading="lazy" />
             {{ a.name }}
           </span>
@@ -506,34 +520,15 @@ const features = [
   border-color: rgba(255, 255, 255, 0.18);
 }
 
-.payment-crypto {
-  color: rgb(247, 147, 26);
-  background: rgba(247, 147, 26, 0.08);
-  border-color: rgba(247, 147, 26, 0.2);
+.payment-brand {
+  color: rgb(var(--accent));
+  background: rgba(var(--accent), 0.1);
+  border-color: rgba(var(--accent), 0.26);
 }
 
-.payment-tg {
-  color: rgb(19, 170, 255);
-  background: rgba(19, 170, 255, 0.08);
-  border-color: rgba(19, 170, 255, 0.2);
-}
-
-.payment-auth-violet {
-  color: rgb(157, 134, 255);
-  background: rgba(157, 134, 255, 0.08);
-  border-color: rgba(157, 134, 255, 0.2);
-}
-
-.payment-auth-green {
-  color: rgb(52, 211, 154);
-  background: rgba(52, 211, 154, 0.08);
-  border-color: rgba(52, 211, 154, 0.2);
-}
-
-.payment-auth-red {
-  color: rgb(252, 63, 29);
-  background: rgba(252, 63, 29, 0.08);
-  border-color: rgba(252, 63, 29, 0.2);
+.payment-brand:hover {
+  background: rgba(var(--accent), 0.16);
+  border-color: rgba(var(--accent), 0.42);
 }
 
 .payment-pill-icon {
