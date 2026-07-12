@@ -94,6 +94,58 @@ MOYNALOG_PROXY_URL=http://proxy.example.com:8080
 Поддерживаются протоколы `http://`, `https://` и `socks5://`. Через этот же прокси идёт и healthcheck-проверка «Мой налог», поэтому статус в мониторинге совпадает с реальным сетевым путём. Если переменная не задана — подключение напрямую.
 :::
 
+## AI-поддержка и база знаний
+
+Модель, API-ключ, язык ответов и правила AI-поддержки настраиваются в админ-панели. Переменные окружения нужны только для отдельной базы знаний (RAG) и, при необходимости, прокси-сервера.
+
+| Переменная | Описание | По умолчанию |
+|------------|----------|-------------|
+| `AI_KB_DATABASE_URL` | Строка подключения к отдельной pgvector-базе знаний. Пусто — база знаний и поиск по ней отключены, AI-поддержка без RAG продолжает работать | — |
+| `AI_KB_POSTGRES_USER` | Пользователь PostgreSQL контейнера `kb-db` из Compose | `kb` |
+| `AI_KB_POSTGRES_PASSWORD` | Пароль PostgreSQL контейнера `kb-db` | `kb` |
+| `AI_KB_POSTGRES_DB` | Имя базы данных контейнера `kb-db` | `kb` |
+| `AI_PROXY_URL` | HTTP(S) или SOCKS5-прокси для запросов к AI-провайдеру и сервису эмбеддингов | — |
+
+### Включение базы знаний
+
+При стандартном `docker-compose.yaml` используется отдельный сервис `kb-db`. Добавьте в `.env`:
+
+```bash
+# Учётные данные отдельной базы знаний
+AI_KB_POSTGRES_USER=kb
+AI_KB_POSTGRES_PASSWORD=change_this_password
+AI_KB_POSTGRES_DB=kb
+
+# Адрес используется контейнером бота: kb-db — имя сервиса в Compose
+AI_KB_DATABASE_URL=postgres://kb:change_this_password@kb-db:5432/kb?sslmode=disable
+```
+
+После изменения перезапустите сервисы. Затем откройте настройки AI-поддержки в админ-панели, включите базу знаний и создайте или импортируйте статьи.
+
+::: warning Внимание
+Не используйте `localhost` в `AI_KB_DATABASE_URL`, если бот запущен в Docker: внутри контейнера `localhost` указывает на сам контейнер бота. Используйте имя сервиса `kb-db`.
+:::
+
+### Прокси для AI-провайдера
+
+Если OpenRouter, OpenAI или другой AI-провайдер недоступен с сервера напрямую, направьте запросы через прокси:
+
+```bash
+# HTTP(S)-прокси
+AI_PROXY_URL=http://user:password@proxy.example.com:8080
+
+# или SOCKS5
+AI_PROXY_URL=socks5://user:password@proxy.example.com:1080
+```
+
+В стандартном `docker-compose.yaml` добавьте переменную в секцию `bot.environment`, чтобы она попала внутрь контейнера:
+
+```yaml
+- AI_PROXY_URL=${AI_PROXY_URL:-}
+```
+
+Если переменная не задана, запросы к AI-провайдеру выполняются напрямую.
+
 
 ## Заголовки Remnawave
 
@@ -191,6 +243,13 @@ REMNAWAVE_MODE=remote
 # REMNAWAVE_HEADERS=
 # TELEGRAM_PROXY_URL=socks5://proxy:1080
 # TELEGRAM_API_URL=http://telegram-bot-api:8081
+
+# === AI-поддержка и база знаний ===
+# AI_KB_DATABASE_URL=postgres://kb:password@kb-db:5432/kb?sslmode=disable
+# AI_KB_POSTGRES_USER=kb
+# AI_KB_POSTGRES_PASSWORD=
+# AI_KB_POSTGRES_DB=kb
+# AI_PROXY_URL=socks5://proxy:1080
 
 # === Логирование ===
 LOG_LEVEL=info
