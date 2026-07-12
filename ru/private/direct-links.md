@@ -35,6 +35,7 @@ https://t.me/<bot_username>?startapp=<value>
 | `renew_<subscription_id>_<plan_id>` | Конфигурацию продления подписки по указанному тарифу (1 месяц по умолчанию) | `https://t.me/<bot_username>?startapp=renew_98765_12` |
 | `buytraffic_<subscription_id>` | ЛК с открытым окном докупки трафика для подписки | `https://t.me/<bot_username>?startapp=buytraffic_98765` |
 | `install_<subscription_id>` | Инструкцию по установке для конкретной подписки | `https://t.me/<bot_username>?startapp=install_98765` |
+| `gift_<code>` | Раздел «Мои подарки» с открытой формой активации подарка | `https://t.me/<bot_username>?startapp=gift_GIFT-XXXX-XXXX` |
 | `broadcast_<broadcast_id>` | Просмотр рассылки по ссылке | `https://t.me/<bot_username>?startapp=broadcast_42` |
 | `partner_app_<application_id>` | Заявку партнёра (требуется право `view_partners`) | `https://t.me/<bot_username>?startapp=partner_app_15` |
 | `partner_wd_<withdrawal_id>` | Заявку на вывод партнёра (требуется право `view_partners`) | `https://t.me/<bot_username>?startapp=partner_wd_77` |
@@ -47,6 +48,7 @@ https://t.me/<bot_username>?startapp=<value>
 | `purchases` | История покупок | `https://t.me/<bot_username>?startapp=purchases` |
 | `plans` | Выбор тарифа | `https://t.me/<bot_username>?startapp=plans` |
 | `promos` | История промокодов | `https://t.me/<bot_username>?startapp=promos` |
+| `gifts` | Мои подарки | `https://t.me/<bot_username>?startapp=gifts` |
 | `referrals` | Рефералы | `https://t.me/<bot_username>?startapp=referrals` |
 | `cabinet` | Кабинет | `https://t.me/<bot_username>?startapp=cabinet` |
 | `billing` | Биллинг | `https://t.me/<bot_username>?startapp=billing` |
@@ -56,6 +58,7 @@ https://t.me/<bot_username>?startapp=<value>
 | `support_new` | Новое обращение | `https://t.me/<bot_username>?startapp=support_new` |
 | `partner` | Партнёрский кабинет | `https://t.me/<bot_username>?startapp=partner` |
 | `guide` | Инструкция по установке | `https://t.me/<bot_username>?startapp=guide` |
+| `dailygames` | Ежедневные игры | `https://t.me/<bot_username>?startapp=dailygames` |
 
 ## Прямые ссылки в браузере (https://bot.example.com)
 
@@ -76,7 +79,10 @@ https://bot.example.com/#/<path>
 | Смена тарифа | `https://bot.example.com/#/change-plan` |
 | Оплата | `https://bot.example.com/#/payment` |
 | История промокодов | `https://bot.example.com/#/my-promos` |
+| Мои подарки | `https://bot.example.com/#/my-gifts` |
 | Рефералы | `https://bot.example.com/#/my-referrals` |
+| Ежедневные игры | `https://bot.example.com/#/daily-games` |
+| Казино | `https://bot.example.com/#/daily-games/casino` |
 | Биллинг | `https://bot.example.com/#/my-billing` |
 | Безопасность | `https://bot.example.com/#/my-security` |
 | Кабинет | `https://bot.example.com/#/cabinet` |
