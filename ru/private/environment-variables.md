@@ -216,6 +216,7 @@ CORS_ALLOWED_ORIGINS=https://bot.example.com,https://admin.example.com
 | `S3_PUBLIC_URL` | Публичный HTTPS URL для presigned-ссылок | — |
 | `S3_BUCKET` | Имя родительского бакета (опционально) | — |
 | `S3_REGION` | Регион S3 | `us-east-1` |
+| `S3_FORCE_PATH_STYLE` | Адресация бакета: path-style (`endpoint/bucket/key`) включена по умолчанию; только точное значение `false` переключает на virtual-hosted style (`bucket.endpoint/key`) | `true` |
 
 ::: tip Совет
 Подробная настройка S3, примеры провайдеров (RustFS, Cloudflare R2) и режим родительского бакета описаны в разделе [Настройка S3 хранилища](/ru/private/s3/).
@@ -267,5 +268,6 @@ ACCESS_LOG_ENABLED=false
 # S3_PUBLIC_URL=
 # S3_BUCKET=
 # S3_REGION=us-east-1
+# S3_FORCE_PATH_STYLE=true
 
 ```
