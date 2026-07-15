@@ -44,6 +44,10 @@ icon: sparkles
          interval: 3s
          timeout: 10s
          retries: 3
+       # Добавляйте только если бот и Remnawave находятся на одном сервере
+       # и подключены к одной Docker-сети.
+       networks:
+         - remnawave-network
 
    volumes:
      kb-db-data:
