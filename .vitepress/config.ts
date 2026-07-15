@@ -56,6 +56,7 @@ export default defineConfig({
             { text: i('server', 'Локальный Bot API'), link: '/ru/private/telegram-local-api' },
             { text: i('link', 'Прямые ссылки'), link: '/ru/private/direct-links' },
             { text: i('robot', 'Мультиботность и партнёры'), link: '/ru/private/multibot' },
+            { text: i('headset', 'Поддержка и операторы'), link: '/ru/private/support-workflow' },
             { text: i('temperature-half', 'Lead Scoring'), link: '/ru/private/lead-scoring' },
             { text: i('robot', 'Факторы автоматизаций'), link: '/ru/private/automation-factors' },
             { text: i('wand-magic-sparkles', 'ИИ-поддержка'), link: '/ru/private/ai-support' },
