@@ -27,14 +27,16 @@ https://t.me/<bot_username>?startapp=<value>
 | Значение `startapp` | Открывает | Пример |
 |---|---|---|
 | *(пусто)* | Стартовый экран (редирект по ролям) | `https://t.me/<bot_username>?startapp` |
-| `user_<user_id>` | Карточку пользователя (админ) | `https://t.me/<bot_username>?startapp=user_123456789` |
+| `user_<customer_id>` | Карточку пользователя (админ) | `https://t.me/<bot_username>?startapp=user_550e8400-e29b-41d4-a716-446655440000` |
 | `support_ticket_<ticket_id>` | Тикет поддержки (для админа — в панели поддержки, для клиента — в его чате) | `https://t.me/<bot_username>?startapp=support_ticket_42` |
+| `csat_ticket_<ticket_id>` | Тикет в клиентском чате поддержки, в том числе для пользователя с правами оператора | `https://t.me/<bot_username>?startapp=csat_ticket_42` |
 | `buy_<plan_id>_<period>` | Конфигурацию покупки тарифа на период (в месяцах) | `https://t.me/<bot_username>?startapp=buy_12_3` |
 | `buy_<plan_id>_<period>_<unit>` | То же, но с указанием единицы периода: `days`, `weeks` или `months` | `https://t.me/<bot_username>?startapp=buy_12_14_days` |
 | `sub_<subscription_id>` | ЛК с выбранной подпиской | `https://t.me/<bot_username>?startapp=sub_98765` |
 | `renew_<subscription_id>_<plan_id>` | Конфигурацию продления подписки по указанному тарифу (1 месяц по умолчанию) | `https://t.me/<bot_username>?startapp=renew_98765_12` |
 | `buytraffic_<subscription_id>` | ЛК с открытым окном докупки трафика для подписки | `https://t.me/<bot_username>?startapp=buytraffic_98765` |
-| `install_<subscription_id>` | Инструкцию по установке для конкретной подписки | `https://t.me/<bot_username>?startapp=install_98765` |
+| `resettraffic_<subscription_id>` | ЛК с открытым окном сброса трафика для подписки | `https://t.me/<bot_username>?startapp=resettraffic_98765` |
+| `install_<subscription_id>` | Экран «Установить и настроить» для конкретной подписки | `https://t.me/<bot_username>?startapp=install_98765` |
 | `gift_<code>` | Раздел «Мои подарки» с открытой формой активации подарка | `https://t.me/<bot_username>?startapp=gift_GIFT-XXXX-XXXX` |
 | `broadcast_<broadcast_id>` | Просмотр рассылки по ссылке | `https://t.me/<bot_username>?startapp=broadcast_42` |
 | `partner_app_<application_id>` | Заявку партнёра (требуется право `view_partners`) | `https://t.me/<bot_username>?startapp=partner_app_15` |
@@ -57,7 +59,7 @@ https://t.me/<bot_username>?startapp=<value>
 | `support` | Поддержка | `https://t.me/<bot_username>?startapp=support` |
 | `support_new` | Новое обращение | `https://t.me/<bot_username>?startapp=support_new` |
 | `partner` | Партнёрский кабинет | `https://t.me/<bot_username>?startapp=partner` |
-| `guide` | Инструкция по установке | `https://t.me/<bot_username>?startapp=guide` |
+| `guide` | Экран «Установить и настроить» без заранее выбранной подписки | `https://t.me/<bot_username>?startapp=guide` |
 | `dailygames` | Ежедневные игры | `https://t.me/<bot_username>?startapp=dailygames` |
 
 ## Прямые ссылки в браузере (https://bot.example.com)
@@ -90,7 +92,7 @@ https://bot.example.com/#/<path>
 | Статус серверов | `https://bot.example.com/#/server-status` |
 | Докупить трафик | `https://bot.example.com/#/buy-extra-traffic` |
 | Добавить устройства | `https://bot.example.com/#/buy-extra-devices` |
-| Инструкция по установке | `https://bot.example.com/#/installation-guide` |
+| Установить и настроить | `https://bot.example.com/#/installation-guide` |
 | Мастер установки | `https://bot.example.com/#/installation-guide/wizard` |
 | Выбор платформы | `https://bot.example.com/#/installation-guide/platforms` |
 | Выбор приложения | `https://bot.example.com/#/installation-guide/apps` |
