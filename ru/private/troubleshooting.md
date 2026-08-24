@@ -139,7 +139,7 @@ docker stats
 docker network inspect remnawave-network
 
 # Перезапуск бота
-docker compose restart bot
+docker compose down && docker compose up -d
 
 # Полный перезапуск
 docker compose down && docker compose up -d

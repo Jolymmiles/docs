@@ -79,7 +79,7 @@ icon: sparkles
 
 3. **Перезапустите бота:**
    ```bash
-   docker compose restart bot
+   docker compose down && docker compose up -d
    ```
 
 4. **Настройте провайдера LLM в админ-панели** → `/ai-settings`:
