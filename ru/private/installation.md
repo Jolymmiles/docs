@@ -55,11 +55,18 @@ sudo chmod -R 777 uploads translations
 
 **Шаг 4: Скачайте файлы переводов**
 
-Скачайте `en.json` и `ru.json` со [страницы релизов](https://me.remnawavebot.dev/releases) и поместите в папку `translations`:
+Скачайте `en.json` и `ru.json` и поместите в папку `translations`:
+
+<div class="dl-buttons">
+  <DownloadButton href="https://s3.rwp.rw/translations/en.json" filename="en.json" />
+  <DownloadButton href="https://s3.rwp.rw/translations/ru.json" filename="ru.json" />
+</div>
+
+Или скачайте прямо на сервере:
 
 ```bash
-# Скопируйте скачанные файлы в директорию translations
-cp en.json ru.json ./translations/
+wget -O ./translations/en.json https://s3.rwp.rw/translations/en.json
+wget -O ./translations/ru.json https://s3.rwp.rw/translations/ru.json
 # Добавьте файлам права, так как от каталога они не наследуются.
 chmod 777 ./translations/*.json
 ```
@@ -262,11 +269,20 @@ sudo chmod -R 777 uploads translations
 
 **Шаг 4: Скачайте файлы переводов**
 
-Скачайте `en.json` и `ru.json` со [страницы релизов](https://me.remnawavebot.dev/releases) и поместите в папку `translations`:
+Скачайте `en.json` и `ru.json` и поместите в папку `translations`:
+
+<div class="dl-buttons">
+  <DownloadButton href="https://s3.rwp.rw/translations/en.json" filename="en.json" />
+  <DownloadButton href="https://s3.rwp.rw/translations/ru.json" filename="ru.json" />
+</div>
+
+Или скачайте прямо на сервере:
 
 ```bash
-# Скопируйте скачанные файлы в директорию translations
-cp en.json ru.json ./translations/
+wget -O ./translations/en.json https://s3.rwp.rw/translations/en.json
+wget -O ./translations/ru.json https://s3.rwp.rw/translations/ru.json
+# Добавьте файлам права, так как от каталога они не наследуются.
+chmod 777 ./translations/*.json
 ```
 
 **Шаг 5: Создайте конфигурацию Docker Compose**

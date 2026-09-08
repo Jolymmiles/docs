@@ -9,6 +9,7 @@ import NavBarTitle from './components/NavBarTitle.vue'
 import NavBarCta from './components/NavBarCta.vue'
 import Tabs from './components/Tabs.vue'
 import TabPanel from './components/TabPanel.vue'
+import DownloadButton from './components/DownloadButton.vue'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import './style.css'
 
@@ -33,5 +34,6 @@ export default {
     app.component('LandingHome', LandingHome)
     app.component('Tabs', Tabs)
     app.component('TabPanel', TabPanel)
+    app.component('DownloadButton', DownloadButton)
   },
 } satisfies Theme
