@@ -46,7 +46,7 @@ export default defineConfig({
             { text: i('hard-drive', 'Резервное копирование'), link: '/ru/private/backup' },
             { text: i('heart-pulse', 'Проверка здоровья'), link: '/ru/private/health' },
             { text: i('scroll', 'Логи доступа'), link: '/ru/private/access-logs' },
-            { text: i('shield-halved', 'Защита от L7-атак'), link: '/ru/private/crowdsec' },
+            { text: i('shield-halved', 'Защита от L7-атак'), link: '/ru/private/l7-protection' },
             { text: i('cloud-arrow-up', 'S3 хранилище'), link: '/ru/private/s3' },
             { text: i('microchip', 'Ядро XanMod'), link: '/ru/private/xanmod' },
             { text: i('server', 'Локальный Bot API'), link: '/ru/private/telegram-local-api' },
