@@ -11,8 +11,6 @@ icon: wrench
 - Убедитесь, что SSL-сертификат валиден
 - Проверьте логи бота: `docker compose logs -f bot`
 
----
-
 ## Ошибка подключения к базе данных
 
 - Проверьте статус PostgreSQL контейнера: `docker compose ps`
@@ -24,15 +22,11 @@ icon: wrench
 docker compose exec db pg_isready -U postgres
 ```
 
----
-
 ## Ошибка прав доступа для uploads
 
 ```bash
 sudo chmod -R 777 /opt/rwp-shop/uploads
 ```
-
----
 
 ## Ошибка прав доступа для logs
 
@@ -45,8 +39,6 @@ error="open access log file: open /logs/access.log: permission denied"
 sudo chmod 777 /opt/rwp-shop/logs
 ```
 
----
-
 ## Бот не подключается к Remnawave
 
 ### На том же сервере (внутренняя сеть)
@@ -58,8 +50,6 @@ sudo chmod 777 /opt/rwp-shop/logs
 - Проверьте, что `REMNAWAVE_URL` указывает на внешний HTTPS URL панели
 - Убедитесь, что панель доступна извне
 - Проверьте `REMNAWAVE_TOKEN`
-
----
 
 ## Контейнер постоянно перезапускается
 
@@ -104,12 +94,8 @@ docker images | grep rwp_shop
 docker load -i rwp_shop-<VERSION>.tar
 ```
 
----
-
 ## Ошибка BOT_IVALID при использовании кнопок в боте, и диплинков
 Проверьте, что у вас выполнены настройки под использование диплинков, раздел документации "Прямые ссылки"
-
----
 
 ## Проверка логов
 
@@ -123,8 +109,6 @@ docker compose logs -f db
 # Последние 100 строк
 docker compose logs --tail 100 bot
 ```
-
----
 
 ## Полезные команды диагностики
 

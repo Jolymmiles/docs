@@ -15,12 +15,11 @@ icon: download
 
 - Linux сервер или VPS
 - Установленные Docker и Docker Compose
+- PostgreSQL **18 или новее** (входит в docker-compose ниже) — бот использует встроенную функцию `uuidv7()` и на более старой версии не запустится
 - Доменное имя с SSL-сертификатом
 - Реверс-прокси (Caddy или Nginx)
 - Установленная и настроенная панель Remnawave
 - Файл Docker образа приватной версии (`.tar`)
-
----
 
 ## Варианты установки
 
@@ -112,7 +111,7 @@ services:
       - remnawave-network
 
   db:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     container_name: rwp_shop_db
     restart: unless-stopped
     environment:
@@ -123,7 +122,7 @@ services:
     ports:
       - "127.0.0.1:9999:5432"
     volumes:
-      - rwp_shop_db_data:/var/lib/postgresql/data
+      - rwp_shop_db_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 3s
@@ -324,7 +323,7 @@ services:
       - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL:-}
 
   db:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     container_name: rwp_shop_db
     restart: unless-stopped
     environment:
@@ -335,7 +334,7 @@ services:
     ports:
       - "127.0.0.1:9999:5432"
     volumes:
-      - rwp_shop_db_data:/var/lib/postgresql/data
+      - rwp_shop_db_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 3s
@@ -443,8 +442,6 @@ docker compose up -d
 
 </TabPanel>
 </Tabs>
-
----
 
 ## Настройка реверс-прокси
 
@@ -571,8 +568,6 @@ sudo systemctl reload nginx
 :::
 
 
----
-
 ## Проверка установки
 
 ```bash
@@ -596,8 +591,6 @@ docker compose logs -f bot
 | Bot HTTP | 8080 | 9912 или 12345 |
 | PostgreSQL | 5432 | - |
 
----
-
 ## После установки
 
 После установки:
@@ -611,8 +604,6 @@ docker compose logs -f bot
    - Роли и разрешения
 
 Все остальные настройки управляются через **UI админ-панели**.
-
----
 
 ## Полезные советы
 
